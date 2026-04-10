@@ -2,7 +2,7 @@
 layout: page
 title: mods
 permalink: /mods/
-description: A growing collection of quality-of-life and automation scripts for Kittens Game.
+description: 
 nav: true
 nav_order: 2
 ---
