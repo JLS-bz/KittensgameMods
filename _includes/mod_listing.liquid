@@ -1,0 +1,28 @@
+<div class="mod-item">
+  <div class="row">
+    {% if project.img %}
+    <div class="col-md-3">
+      {% include figure.liquid loading="eager" path=project.img alt=project.title class="img-fluid mod-thumbnail" %}
+    </div>
+    <div class="col-md-9">
+    {% else %}
+    <div class="col-md-12">
+    {% endif %}
+      <h3 class="mod-title">{{ project.title }}</h3>
+      <p class="mod-description">{{ project.description }}</p>
+      <div class="mod-actions">
+        {% if project.install_url %}
+          <a href="{{ project.install_url }}" class="btn btn-sm btn-primary" target="_blank">
+            <i class="fa-solid fa-download"></i> Install
+          </a>
+        {% endif %}
+        {% if project.download_url %}
+          <a href="{{ project.download_url }}" class="btn btn-sm btn-secondary" target="_blank">
+            <i class="fa-solid fa-file-download"></i> Download
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <hr class="mod-divider">
+</div>

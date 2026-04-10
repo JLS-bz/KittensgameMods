@@ -1,11 +1,12 @@
 ---
 layout: page
-title: project 1
-description: with background image
-img: assets/img/12.jpg
+title: Kitten Turbo Speed
+description: Set custom game speed multipliers (1x, 25x, 50x, 75x, 100x) to accelerate your gameplay
+img: assets/img/speedup.png
 importance: 1
 category: work
-related_publications: true
+install_url: https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/kitten-turbo.user.js
+download_url: https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/kitten-turbo.user.js
 ---
 
 Every project has a beautiful feature showcase page.

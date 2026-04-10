@@ -15,7 +15,7 @@ selected_papers: false # hide publications section
 social: true # includes social icons at the bottom of the page
 
 announcements:
-  enabled: true # mod updates and announcements
+  enabled: false # mod updates and announcements
   scrollable: true
   limit: 5
 
@@ -41,8 +41,6 @@ A collection of quality-of-life and automation scripts to enhance your Kittens G
 - Click the install link on each mod's project page
 - Scripts will run automatically on every page load
 
-### Available Mods
 
-Browse the [Projects](/KittensgameMods/projects/) section to see all available mods, features, and installation links.
 
 
