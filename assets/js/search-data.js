@@ -30,6 +30,6 @@ ninja.data = [{
               window.location.href = "/KittensgameMods/mods/3_mod/";
             },},{id: "mods-auto-build",
           title: 'Auto Build',
-          description: "Automatically builds buildings based on customizable selection",section: "Mods",handler: () => {
+          description: "Automatically builds buildings based on customizable selection, prioritizing the cheapest options. Start and stop the automation with a button.",section: "Mods",handler: () => {
               window.location.href = "/KittensgameMods/mods/4_mod/";
             },},];
