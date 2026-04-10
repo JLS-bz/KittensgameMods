@@ -338,7 +338,6 @@
                 console.error('[AutoBuild] Failed to build:', building.name, e);
             }
         }
-        }
 
         // Wait for Automation Panel to be ready
         function waitForPanel() {
