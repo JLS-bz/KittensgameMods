@@ -12,13 +12,15 @@
     'use strict';
 
     // Wait for Automation Panel to be available
+    // Also wait a moment for Auto Build to load first (initialization order)
     function waitForPanel(callback, maxAttempts = 100) {
         let attempts = 0;
         const checkInterval = setInterval(() => {
             attempts++;
             if (window.AutomationPanel && typeof window.AutomationPanel.addSection === 'function') {
                 clearInterval(checkInterval);
-                callback();
+                // Give Auto Build a moment to fully initialize (100ms + initial setup time)
+                setTimeout(callback, 150);
             } else if (attempts >= maxAttempts) {
                 clearInterval(checkInterval);
                 console.error('[AutoZebraTrade] Automation Panel not found after 100 attempts');
@@ -71,8 +73,8 @@
                     <input type="checkbox" id="tr_winter" checked> Winter
                 </label>
             </div>
-            <div id="tradeStatus" style="margin-top:6px; color:#888; font-size:11px;">Idle</div>
-            <hr style="margin:8px 0;">
+            <div id="tradeStatus" style="margin-top:6px; margin-bottom:8px; color:#888; font-size:11px;">Idle</div>
+            <div style="border-bottom:1px solid #ccc; margin-bottom:8px;"></div>
         `;
 
         /**

@@ -84,16 +84,24 @@
             // Add section to the automation panel
             window.AutomationPanel.addSection(sectionHTML);
 
-            // Attach event listeners after section is added
+            // Attach event listeners after section is added with proper scope binding
             setTimeout(function() {
                 const customBtn = document.getElementById('autobuild-customize');
                 const toggleBtn = document.getElementById('autobuild-toggle');
-                if (customBtn) customBtn.addEventListener('click', openConfigWindow);
-                if (toggleBtn) toggleBtn.addEventListener('click', function() {
-                    state.running = !state.running;
-                    updateToggleButton(toggleBtn);
-                });
-            }, 50);
+                
+                if (customBtn) {
+                    customBtn.onclick = function() {
+                        openConfigWindow();
+                    };
+                }
+                
+                if (toggleBtn) {
+                    toggleBtn.onclick = function() {
+                        state.running = !state.running;
+                        updateToggleButton(toggleBtn);
+                    };
+                }
+            }, 200);
         }
 
         function updateToggleButton(btn) {
