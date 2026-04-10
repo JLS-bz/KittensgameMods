@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kittens Game - Automation Panel
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      1.1
 // @description  Adds third panel tab for automation scripts (prerequisite mod)
 // @author       JLS-bz
 // @match        https://kittensgame.com/*

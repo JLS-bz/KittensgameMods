@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Auto Zebra Trading
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      1.1
 // @description  Automate gold trading with zebras based on customizable threshold
 // @author       JLS-bz
 // @match        https://kittensgame.com/*
