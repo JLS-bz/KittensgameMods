@@ -6,7 +6,6 @@
 // @author       JLS-bz
 // @match        https://kittensgame.com/*
 // @grant        none
-// @require      https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/automation-panel.user.js
 // ==/UserScript==
 
 (function() {
