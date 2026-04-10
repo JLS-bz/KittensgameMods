@@ -48,7 +48,7 @@
             state.automationLink = document.createElement('a');
             state.automationLink.id = 'automationLink';
             state.automationLink.href = '#';
-            state.automationLink.style.cssText = 'cursor:pointer; text-decoration:underline; margin:0 8px;';
+            state.automationLink.style.cssText = 'cursor:pointer; margin:0 8px;';
             state.automationLink.innerText = 'Automation';
             linkParent.parentElement.appendChild(state.automationLink);
 
