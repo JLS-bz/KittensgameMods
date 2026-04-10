@@ -4,7 +4,7 @@ title: Auto Build
 description: Automatically builds buildings based on customizable selection, prioritizing the cheapest options. Start and stop the automation with a button.
 img: /assets/img/4.jpg
 importance: 3
-version: 1.0
+version: 1.1
 last_updated: 2026-04-10
 install_url: https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/auto-build.user.js
 download_url: https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/auto-build.user.js
