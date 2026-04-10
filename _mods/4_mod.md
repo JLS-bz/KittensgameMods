@@ -1,24 +1,16 @@
 ---
 layout: page
 title: Auto Build
-description: Automatically builds buildings based on customizable selection
+description: Automatically builds buildings based on customizable selection, prioritizing the cheapest options. Start and stop the automation with a button.
 img: /assets/img/4.jpg
-importance: 4
+importance: 3
 version: 1.0
-last_updated: 4/10/2026
+last_updated: 2026-04-10
 install_url: https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/auto-build.user.js
 download_url: https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/auto-build.user.js
 requires_mod: "Requires Automation Panel"
 ---
 
-## Features
-
-- **Customizable Building Selection**: Choose which buildings to auto-build through an organized checklist
-- **Category-Based Organization**: Buildings organized into logical categories for easy management
-- **Smart Building**: Automatically builds available buildings, prioritizing the cheapest options
-- **Real-Time Control**: Start and stop the automation with a single button
-- **Persistent Settings**: Your building preferences are saved locally
-- **Movable Configuration Window**: Easily accessible settings window that doesn't obstruct gameplay
 
 ## Settings
 
