@@ -12,15 +12,17 @@
     'use strict';
 
     const AutoBuild = (function() {
-        // Building categories
+        // Building categories (using camelCase names as found in game)
         const BUILDING_CATEGORIES = {
-            'Housing': ['Hut', 'Dome', 'Log House', 'Mansion', 'Hotel'],
-            'Production': ['Farm', 'Mine', 'Lumbermill', 'Aqueduct', 'Pasture', 'Smelter', 'Brewery'],
-            'Science': ['Library', 'Academy', 'Observatory', 'Laboratory', 'Research Center'],
-            'Culture': ['Amphitheater', 'Temple', 'Statue', 'Shrine', 'Cathedral'],
-            'Management': ['Warehouse', 'Granary', 'Barracks', 'Market', 'Trade Post'],
-            'Military': ['Watchtower', 'Wall', 'Garrison', 'Armory'],
-            'Unique': ['Ziggurat', 'Pyramid', 'Sungate', 'Lighthouse', 'Hydro Plant']
+            'Housing': ['hut', 'mansion', 'hotel'],
+            'Production': ['farm', 'pasture', 'aqueduct', 'mine', 'quarry', 'lumberMill', 'oilWell', 'smelter', 'brewery'],
+            'Science': ['library', 'academy', 'observatory', 'biolab'],
+            'Culture': ['amphitheatre', 'chapel', 'temple'],
+            'Storage': ['barn', 'warehouse'],
+            'Trade': ['harbor', 'tradepost', 'mint'],
+            'Industry': ['workshop', 'factory', 'steamworks', 'magneto', 'calciner'],
+            'Advanced': ['reactor', 'accelerator', 'chronosphere', 'aiCore'],
+            'Unique': ['ziggurat', 'unicornPasture', 'zebraOutpost', 'zebraWorkshop', 'zebraForge', 'ivoryTemple']
         };
 
         const state = {
@@ -259,8 +261,10 @@
         }
 
         function getAllBuildings() {
-            if (typeof gamePage === 'undefined' || !gamePage.buildings) return [];
-            return gamePage.buildings;
+            if (typeof gamePage === 'undefined' || !gamePage.bld || !gamePage.bld.buildingsData) {
+                return [];
+            }
+            return gamePage.bld.buildingsData;
         }
 
         function isBuildingEnabled(building) {
@@ -273,34 +277,31 @@
         }
 
         function calculateBuildingCost(building) {
-            // Simple cost calculation - total of all required resources
-            if (!building.cost) return 0;
+            // Sum total of all required resources
+            if (!building.prices || building.prices.length === 0) return 0;
             let total = 0;
-            building.cost.forEach(resource => {
-                total += resource.val;
+            building.prices.forEach(resource => {
+                total += resource.val || 0;
             });
             return total;
         }
 
         function canBuildBuilding(building) {
-            if (!building.cost) return false;
+            if (!building.prices || building.prices.length === 0) return false;
 
             // Check if we have enough resources
-            for (const resource of building.cost) {
+            for (const resource of building.prices) {
                 const resName = resource.name;
                 const resAmount = resource.val;
 
                 let available = 0;
                 
-                // Try different ways to get resource amount
+                // Get resource amount from game
                 if (gamePage.resPool && gamePage.resPool.resources) {
                     const res = gamePage.resPool.resources.find(r => r.name === resName);
                     if (res && res.value !== undefined) {
                         available = res.value;
                     }
-                } else if (gamePage.resPool && gamePage.resPool[resName]) {
-                    // Alternative: direct access
-                    available = gamePage.resPool[resName];
                 }
 
                 if (available < resAmount) {
@@ -314,40 +315,29 @@
 
         function buildBuilding(building) {
             try {
-                // Try multiple approaches to build
+                // Find the button element for this building by searching for the label
+                const buttons = Array.from(document.querySelectorAll('.btn.nosel.modern'));
+                let buildButton = null;
                 
-                // Approach 1: Direct buildBuilding method
-                if (typeof building.buildBuilding === 'function') {
-                    building.buildBuilding(1);
-                    console.log('[AutoBuild] Built via buildBuilding():', building.name);
+                // The building label is what appears on the button in the UI
+                for (const btn of buttons) {
+                    if (btn.textContent.includes(building.label)) {
+                        buildButton = btn;
+                        break;
+                    }
+                }
+                
+                if (buildButton) {
+                    buildButton.click();
+                    console.log('[AutoBuild] Built via UI click:', building.name, '(' + building.label + ')');
                     return;
                 }
                 
-                // Approach 2: Try triggering click through UI if available
-                if (building.buildings && building.buildings.length > 0) {
-                    // This is a building class with instances
-                    for (let bld of building.buildings) {
-                        if (bld && bld.buildBuilding && typeof bld.buildBuilding === 'function') {
-                            bld.buildBuilding();
-                            console.log('[AutoBuild] Built building instance:', building.name);
-                            return;
-                        }
-                    }
-                }
-                
-                // Approach 3: Try via game action system
-                if (gamePage && gamePage.msg) {
-                    const actionId = 'build' + building.name.replace(/\s+/g, '');
-                    if (gamePage.msg(actionId)) {
-                        console.log('[AutoBuild] Built via game action:', building.name);
-                        return;
-                    }
-                }
-                
-                console.warn('[AutoBuild] No valid build method found for:', building.name, building);
+                console.warn('[AutoBuild] Could not find button for building:', building.name, 'label:', building.label);
             } catch (e) {
                 console.error('[AutoBuild] Failed to build:', building.name, e);
             }
+        }
         }
 
         // Wait for Automation Panel to be ready
