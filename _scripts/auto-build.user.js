@@ -242,6 +242,7 @@
         function tryBuild() {
             // Check if game is loaded
             if (typeof gamePage === 'undefined') {
+                console.debug('[AutoBuild] gamePage not available');
                 return;
             }
 
@@ -249,6 +250,7 @@
                 // Get list of buildable buildings
                 const buildings = getAllBuildings();
                 if (buildings.length === 0) {
+                    console.debug('[AutoBuild] No buildings available');
                     return;
                 }
 
@@ -270,8 +272,11 @@
 
                 // Build the cheapest buildable building
                 if (cheapestBuilding) {
+                    console.log('[AutoBuild] Attempting to build:', cheapestBuilding.name, 'cost:', cheapestCost);
                     buildBuilding(cheapestBuilding);
                     state.lastBuildTime = Date.now();
+                } else {
+                    console.debug('[AutoBuild] No buildable buildings found');
                 }
             } catch (e) {
                 console.error('[AutoBuild] Build loop error:', e);
@@ -323,6 +328,7 @@
                 }
 
                 if (available < resAmount) {
+                    console.debug(`[AutoBuild] Not enough ${resName}: have ${available}, need ${resAmount}`);
                     return false;
                 }
             }
@@ -346,8 +352,10 @@
                 
                 if (buildButton) {
                     buildButton.click();
+                    console.log('[AutoBuild] ✓ Built via UI click:', building.name);
                     return;
                 }
+                console.warn('[AutoBuild] Could not find button for:', building.name);
             } catch (e) {
                 console.error('[AutoBuild] Failed to build:', building.name, e);
             }
