@@ -5,7 +5,7 @@ description: Automatically trade gold with zebras based on a customizable gold c
 img: assets/img/zebra.png
 importance: 2
 version: 1.1
-last_updated: 2026-04-09
+last_updated: 2026-04-10
 requires_mod: "Requires Automation Panel"
 install_url: https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/auto-zebra-trading.user.js
 download_url: https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/auto-zebra-trading.user.js
