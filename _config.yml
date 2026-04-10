@@ -53,7 +53,6 @@ external_services:
 navbar_fixed: true
 footer_fixed: true
 search_enabled: true
-socials_in_search: false
 posts_in_search: false
 bib_search: true
 
@@ -152,12 +151,6 @@ newsletter:
 # -----------------------------------------------------------------------------
 
 collections:
-  books:
-    output: true
-  news:
-    defaults:
-      layout: post
-    output: false
   mods:
     output: true
   teachings:
@@ -222,7 +215,6 @@ plugins:
   - jekyll-regex-replace
   - jekyll/scholar
   - jekyll-sitemap
-  - jekyll-socials
   - jekyll-tabs
   - jekyll-terser
   - jekyll-toc
@@ -261,13 +253,11 @@ terser:
 
 jekyll-archives:
   posts:
-    enabled: [year, tags, categories] # enables year, tag and category archives (remove if you need to disable one of them).
+    enabled: [year, tags, categories] # enables year, tag and category archives
     permalinks:
       year: "/blog/:year/"
       tags: "/blog/:type/:name/"
       categories: "/blog/:type/:name/"
-  books:
-    enabled: [year, tags, categories] # enables year, tag and category archives (remove if you need to disable one of them).
 
 display_tags: ["formatting", "images", "links", "math", "code", "blockquotes"] # these tags will be displayed on the front page of your blog
 display_categories: ["external-services"] # these categories will be displayed on the front page of your blog
@@ -404,7 +394,6 @@ enable_masonry: true # enables automatic mod cards arrangement
 enable_math: true # enables math typesetting (uses MathJax)
 enable_tooltips: false # enables automatic tooltip links generated for each section titles on pages and posts
 enable_darkmode: true # enables switching between light/dark modes
-enable_navbar_social: false # enables displaying social links in the navbar on the about page
 enable_mod_categories: false # enables categorization of mods into multiple categories
 enable_medium_zoom: true # enables image zoom feature (as on medium.com)
 enable_progressbar: true # enables a horizontal progress bar linked to the vertical scroll position

@@ -11,13 +11,6 @@ profile:
   
 
 
-selected_papers: false # hide publications section
-social: true # includes social icons at the bottom of the page
-
-announcements:
-  enabled: false # mod updates and announcements
-  scrollable: true
-  limit: 5
 
 latest_posts:
   enabled: false # hide blog posts
