@@ -32,7 +32,7 @@
             panel: null,
             configWindow: null,
             lastBuildTime: 0,
-            buildCheckInterval: 500 // Check every 500ms
+            buildCheckInterval: 10000 // Check every 10 seconds
         };
 
         // Initialize default config
@@ -102,7 +102,7 @@
             // Create the section HTML
             const sectionHTML = `
 <div id="autobuild-section" style="padding:8px;">
-  <b>Auto Build</b>
+  <b style="font-size:14px;">Auto Build</b>
   <div style="margin-top:5px; display:flex; gap:5px;">
     <button id="autobuild-customize" style="padding:3px 8px; font-size:11px; cursor:pointer;">Customize</button>
     <button id="autobuild-toggle" style="padding:3px 8px; font-size:11px; cursor:pointer; background-color:#006400; color:white; border:none; border-radius:3px;">Start</button>
@@ -242,7 +242,6 @@
         function tryBuild() {
             // Check if game is loaded
             if (typeof gamePage === 'undefined') {
-                console.debug('[AutoBuild] gamePage not available');
                 return;
             }
 
@@ -250,7 +249,6 @@
                 // Get list of buildable buildings
                 const buildings = getAllBuildings();
                 if (buildings.length === 0) {
-                    console.debug('[AutoBuild] No buildings available');
                     return;
                 }
 
@@ -272,11 +270,8 @@
 
                 // Build the cheapest buildable building
                 if (cheapestBuilding) {
-                    console.log('[AutoBuild] Building:', cheapestBuilding.name, 'cost:', cheapestCost);
                     buildBuilding(cheapestBuilding);
                     state.lastBuildTime = Date.now();
-                } else {
-                    console.debug('[AutoBuild] No buildable buildings found (building check failed)');
                 }
             } catch (e) {
                 console.error('[AutoBuild] Build loop error:', e);
@@ -328,7 +323,6 @@
                 }
 
                 if (available < resAmount) {
-                    console.debug(`[AutoBuild] Not enough ${resName}: have ${available}, need ${resAmount}`);
                     return false;
                 }
             }
@@ -352,11 +346,8 @@
                 
                 if (buildButton) {
                     buildButton.click();
-                    console.log('[AutoBuild] Built via UI click:', building.name, '(' + building.label + ')');
                     return;
                 }
-                
-                console.warn('[AutoBuild] Could not find button for building:', building.name, 'label:', building.label);
             } catch (e) {
                 console.error('[AutoBuild] Failed to build:', building.name, e);
             }
