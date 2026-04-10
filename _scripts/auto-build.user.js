@@ -326,8 +326,37 @@
             return total;
         }
 
+        function isButtonClickable(btn) {
+            // Check if button is disabled, has disabled class, or is hidden
+            if (btn.disabled || btn.classList.contains('disabled')) {
+                return false;
+            }
+            // Check computed style - button might be red/disabled via CSS
+            const style = window.getComputedStyle(btn);
+            if (style.opacity === '0.5' || style.color === 'rgb(128, 128, 128)') {
+                return false;
+            }
+            return true;
+        }
+
         function canBuildBuilding(building) {
             if (!building.prices || building.prices.length === 0) return false;
+
+            // Also check if the button itself is clickable in the UI
+            const buttons = Array.from(document.querySelectorAll('.btn.nosel.modern'));
+            let buildButton = null;
+            for (const btn of buttons) {
+                if (btn.textContent.includes(building.label)) {
+                    buildButton = btn;
+                    break;
+                }
+            }
+            
+            // If button exists but is disabled, can't build
+            if (buildButton && !isButtonClickable(buildButton)) {
+                console.debug(`[AutoBuild] Button disabled: ${building.name}`);
+                return false;
+            }
 
             // Check if we have enough resources
             for (const resource of building.prices) {
@@ -368,6 +397,12 @@
                 }
                 
                 if (buildButton) {
+                    // Double-check button is clickable before clicking
+                    if (!isButtonClickable(buildButton)) {
+                        console.warn(`[AutoBuild] Button is disabled/unavailable: ${building.name}`);
+                        return;
+                    }
+                    
                     buildButton.click();
                     console.log('[AutoBuild] ✓ Built via UI click:', building.name);
                     return;
