@@ -71,11 +71,11 @@
         function addToPanel() {
             // Create the section HTML
             const sectionHTML = `
-<div id="autobuild-section" style="padding:8px; border-top:1px solid #ccc; margin-top:8px;">
+<div id="autobuild-section" style="padding:8px;">
   <b>Auto Build</b>
   <div style="margin-top:5px; display:flex; gap:5px;">
-    <button id="autobuild-customize" style="padding:3px 8px; font-size:11px; cursor:pointer;">Customize</button>
-    <button id="autobuild-toggle" style="padding:3px 8px; font-size:11px; cursor:pointer; background-color:#006400; color:white; border:none; border-radius:3px;">Start</button>
+    <button id="autobuild-customize" data-action="customize" style="padding:3px 8px; font-size:11px; cursor:pointer;">Customize</button>
+    <button id="autobuild-toggle" data-action="toggle" style="padding:3px 8px; font-size:11px; cursor:pointer; background-color:#006400; color:white; border:none; border-radius:3px;">Start</button>
     <span id="autobuild-status" style="font-size:11px; margin-left:5px; align-self:center;">● Idle</span>
   </div>
 </div>
@@ -84,24 +84,23 @@
             // Add section to the automation panel
             window.AutomationPanel.addSection(sectionHTML);
 
-            // Attach event listeners after section is added with proper scope binding
+            // Use event delegation - attach listeners to document for button clicks
             setTimeout(function() {
-                const customBtn = document.getElementById('autobuild-customize');
-                const toggleBtn = document.getElementById('autobuild-toggle');
-                
-                if (customBtn) {
-                    customBtn.onclick = function() {
-                        openConfigWindow();
-                    };
-                }
-                
-                if (toggleBtn) {
-                    toggleBtn.onclick = function() {
-                        state.running = !state.running;
-                        updateToggleButton(toggleBtn);
-                    };
-                }
+                document.addEventListener('click', handleButtonClick, true);
             }, 200);
+        }
+
+        function handleButtonClick(e) {
+            const action = e.target.getAttribute('data-action');
+            
+            if (action === 'customize' && e.target.id === 'autobuild-customize') {
+                e.preventDefault();
+                openConfigWindow();
+            } else if (action === 'toggle' && e.target.id === 'autobuild-toggle') {
+                e.preventDefault();
+                state.running = !state.running;
+                updateToggleButton(e.target);
+            }
         }
 
         function updateToggleButton(btn) {

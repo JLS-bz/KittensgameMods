@@ -73,8 +73,7 @@
                     <input type="checkbox" id="tr_winter" checked> Winter
                 </label>
             </div>
-            <div id="tradeStatus" style="margin-top:6px; margin-bottom:8px; color:#888; font-size:11px;">Idle</div>
-            <div style="border-bottom:1px solid #ccc; margin-bottom:8px;"></div>
+            <div id="tradeStatus" style="margin-top:6px; color:#888; font-size:11px;">Idle</div>
         `;
 
         /**

@@ -163,6 +163,12 @@
          */
         function addSection(html) {
             if (state.panel) {
+                // Add top border if there's already content
+                if (state.panel.children.length > 0) {
+                    const borderDiv = document.createElement('div');
+                    borderDiv.style.cssText = 'border-top:1px solid #ccc; margin:8px 0;';
+                    state.panel.appendChild(borderDiv);
+                }
                 state.panel.insertAdjacentHTML('beforeend', html);
             } else {
                 // Queue if panel not ready yet
