@@ -11,7 +11,7 @@ ninja.data = [{
     },
   },{id: "nav-mods",
           title: "mods",
-          description: "A growing collection of quality-of-life and automation scripts for Kittens Game.",
+          description: "",
           section: "Navigation",
           handler: () => {
             window.location.href = "/KittensgameMods/mods/";
