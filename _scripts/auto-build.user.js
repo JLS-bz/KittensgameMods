@@ -216,12 +216,18 @@
 
         function tryBuild() {
             // Check if game is loaded
-            if (typeof gamePage === 'undefined') return;
+            if (typeof gamePage === 'undefined') {
+                console.debug('[AutoBuild] gamePage not available');
+                return;
+            }
 
             try {
                 // Get list of buildable buildings
                 const buildings = getAllBuildings();
-                if (buildings.length === 0) return;
+                if (buildings.length === 0) {
+                    console.debug('[AutoBuild] No buildings available');
+                    return;
+                }
 
                 // Find the cheapest buildable building that's enabled
                 let cheapestBuilding = null;
@@ -230,8 +236,10 @@
                 buildings.forEach(building => {
                     if (!isBuildingEnabled(building)) return;
 
+                    if (!canBuildBuilding(building)) return;
+
                     const cost = calculateBuildingCost(building);
-                    if (cost > 0 && cost < cheapestCost && canBuildBuilding(building)) {
+                    if (cost > 0 && cost < cheapestCost) {
                         cheapestCost = cost;
                         cheapestBuilding = building;
                     }
@@ -239,8 +247,11 @@
 
                 // Build the cheapest buildable building
                 if (cheapestBuilding) {
+                    console.log('[AutoBuild] Building:', cheapestBuilding.name, 'cost:', cheapestCost);
                     buildBuilding(cheapestBuilding);
                     state.lastBuildTime = Date.now();
+                } else {
+                    console.debug('[AutoBuild] No buildable buildings found (building check failed)');
                 }
             } catch (e) {
                 console.error('[AutoBuild] Build loop error:', e);
@@ -279,16 +290,21 @@
                 const resName = resource.name;
                 const resAmount = resource.val;
 
-                // Find resource in game
                 let available = 0;
+                
+                // Try different ways to get resource amount
                 if (gamePage.resPool && gamePage.resPool.resources) {
                     const res = gamePage.resPool.resources.find(r => r.name === resName);
-                    if (res) {
+                    if (res && res.value !== undefined) {
                         available = res.value;
                     }
+                } else if (gamePage.resPool && gamePage.resPool[resName]) {
+                    // Alternative: direct access
+                    available = gamePage.resPool[resName];
                 }
 
                 if (available < resAmount) {
+                    console.debug(`[AutoBuild] Not enough ${resName}: have ${available}, need ${resAmount}`);
                     return false;
                 }
             }
@@ -298,7 +314,37 @@
 
         function buildBuilding(building) {
             try {
-                building.buildBuilding(1);
+                // Try multiple approaches to build
+                
+                // Approach 1: Direct buildBuilding method
+                if (typeof building.buildBuilding === 'function') {
+                    building.buildBuilding(1);
+                    console.log('[AutoBuild] Built via buildBuilding():', building.name);
+                    return;
+                }
+                
+                // Approach 2: Try triggering click through UI if available
+                if (building.buildings && building.buildings.length > 0) {
+                    // This is a building class with instances
+                    for (let bld of building.buildings) {
+                        if (bld && bld.buildBuilding && typeof bld.buildBuilding === 'function') {
+                            bld.buildBuilding();
+                            console.log('[AutoBuild] Built building instance:', building.name);
+                            return;
+                        }
+                    }
+                }
+                
+                // Approach 3: Try via game action system
+                if (gamePage && gamePage.msg) {
+                    const actionId = 'build' + building.name.replace(/\s+/g, '');
+                    if (gamePage.msg(actionId)) {
+                        console.log('[AutoBuild] Built via game action:', building.name);
+                        return;
+                    }
+                }
+                
+                console.warn('[AutoBuild] No valid build method found for:', building.name, building);
             } catch (e) {
                 console.error('[AutoBuild] Failed to build:', building.name, e);
             }
