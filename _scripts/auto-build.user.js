@@ -78,6 +78,8 @@
             if (tier === null) return true; // Unrestricted tier includes everything
             return tier.includes(building.name);
         }
+
+        const state = {
             running: false,
             enabled: true,
             config: {},
