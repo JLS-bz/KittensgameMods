@@ -11,6 +11,12 @@
 (function() {
     'use strict';
 
+    // Prevent multiple initializations
+    if (window.AutomationPanel) {
+        console.log('[AutomationPanel] Already loaded, skipping duplicate initialization');
+        return;
+    }
+
     const AutomationPanel = (function() {
         const state = {
             panel: null,
