@@ -2,35 +2,50 @@
 layout: about
 title: about
 permalink: /
-subtitle: <a href='#'>Affiliations</a>. Address. Contacts. Motto. Etc.
+subtitle: Quality of Life & Automation Scripts for Kittens Game
 
 profile:
   align: right
   image: prof_pic.png
-  image_circular: false # crops the image to make it circular
+  image_circular: false
   more_info: >
-    <p>555 your office number</p>
-    <p>123 your address street</p>
-    <p>Your City, State 12345</p>
+    <p><strong>Installation Methods</strong></p>
+    <p>• Copy & Paste to Console</p>
+    <p>• Tampermonkey / Violentmonkey</p>
+    <p><a href="https://www.reddit.com/r/kittensgame/">Kittens Game Reddit</a></p>
 
-selected_papers: true # includes a list of papers marked as "selected={true}"
+selected_papers: false # hide publications section
 social: true # includes social icons at the bottom of the page
 
 announcements:
-  enabled: true # includes a list of news items
-  scrollable: true # adds a vertical scroll bar if there are more than 3 news items
-  limit: 5 # leave blank to include all the news in the `_news` folder
+  enabled: true # mod updates and announcements
+  scrollable: true
+  limit: 5
 
 latest_posts:
-  enabled: true
-  scrollable: true # adds a vertical scroll bar if there are more than 3 new posts items
-  limit: 3 # leave blank to include all the blog posts
+  enabled: false # hide blog posts
 ---
 
-A bookmarklet-based automation and quality-of-life suite for Kittens Game. 
+## Welcome to Kittens Game Mods
 
-Write your biography here. Tell the world about yourself. Link to your favorite [subreddit](https://www.reddit.com). You can put a picture in, too. The code is already in, just name your picture `prof_pic.jpg` and put it in the `img/` folder.
+A collection of quality-of-life and automation scripts to enhance your Kittens Game experience. These scripts are designed to reduce grinding, automate repetitive tasks, and provide helpful information at a glance.
 
-Put your address / P.O. box / other info right below your picture. You can also disable any of these elements by editing `profile` property of the YAML header of your `_pages/about.md`. Edit `_bibliography/papers.bib` and Jekyll will render your [publications page](/al-folio/publications/) automatically.
+### Installation Methods
+
+**Option 1: Copy & Paste to Console**
+1. Open Kittens Game in your browser
+2. Press `F12` to open Developer Tools
+3. Go to the Console tab
+4. Copy the script code from the mod page
+5. Paste it into the console and press Enter
+
+**Option 2: Userscript Manager (Recommended)**
+- Install [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/)
+- Click the install link on each mod's project page
+- Scripts will run automatically on every page load
+
+### Available Mods
+
+Browse the [Projects](/KittensgameMods/projects/) section to see all available mods, features, and installation links.
 
 
