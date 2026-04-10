@@ -68,51 +68,31 @@
         }
 
         function addToPanel() {
-            const panel = AutomationPanel.getPanel();
-            if (!panel) {
-                throw new Error('Automation Panel not found');
-            }
+            // Create the section HTML
+            const sectionHTML = `
+<div id="autobuild-section" style="padding:8px; border-top:1px solid #ccc; margin-top:8px;">
+  <b>Auto Build</b>
+  <div style="margin-top:5px; display:flex; gap:5px;">
+    <button id="autobuild-customize" style="padding:3px 8px; font-size:11px; cursor:pointer;">Customize</button>
+    <button id="autobuild-toggle" style="padding:3px 8px; font-size:11px; cursor:pointer; background-color:#006400; color:white; border:none; border-radius:3px;">Start</button>
+    <span id="autobuild-status" style="font-size:11px; margin-left:5px; align-self:center;">● Idle</span>
+  </div>
+</div>
+            `;
 
-            const section = document.createElement('div');
-            section.id = 'autobuild-section';
-            section.style.cssText = 'padding:8px; border-top:1px solid #ccc; margin-top:8px;';
+            // Add section to the automation panel
+            AutomationPanel.addSection(sectionHTML);
 
-            // Title
-            const title = document.createElement('b');
-            title.innerText = 'Auto Build';
-            section.appendChild(title);
-
-            // Controls container
-            const controls = document.createElement('div');
-            controls.style.cssText = 'margin-top:5px; display:flex; gap:5px;';
-
-            // Customization button
-            const customBtn = document.createElement('button');
-            customBtn.innerText = 'Customize';
-            customBtn.style.cssText = 'padding:3px 8px; font-size:11px; cursor:pointer;';
-            customBtn.addEventListener('click', openConfigWindow);
-            controls.appendChild(customBtn);
-
-            // Start/Stop button
-            const toggleBtn = document.createElement('button');
-            toggleBtn.id = 'autobuild-toggle';
-            toggleBtn.innerText = state.running ? 'Stop' : 'Start';
-            toggleBtn.style.cssText = 'padding:3px 8px; font-size:11px; cursor:pointer; background-color:' + (state.running ? '#8b0000' : '#006400') + '; color:white; border:none; border-radius:3px;';
-            toggleBtn.addEventListener('click', function() {
-                state.running = !state.running;
-                updateToggleButton(toggleBtn);
-            });
-            controls.appendChild(toggleBtn);
-
-            // Status label
-            const statusLabel = document.createElement('span');
-            statusLabel.id = 'autobuild-status';
-            statusLabel.style.cssText = 'font-size:11px; margin-left:5px; align-self:center;';
-            statusLabel.innerText = state.running ? '● Building' : '● Idle';
-            controls.appendChild(statusLabel);
-
-            section.appendChild(controls);
-            panel.appendChild(section);
+            // Attach event listeners after section is added
+            setTimeout(function() {
+                const customBtn = document.getElementById('autobuild-customize');
+                const toggleBtn = document.getElementById('autobuild-toggle');
+                if (customBtn) customBtn.addEventListener('click', openConfigWindow);
+                if (toggleBtn) toggleBtn.addEventListener('click', function() {
+                    state.running = !state.running;
+                    updateToggleButton(toggleBtn);
+                });
+            }, 50);
         }
 
         function updateToggleButton(btn) {
@@ -327,7 +307,7 @@
 
         // Wait for Automation Panel to be ready
         function waitForPanel() {
-            if (typeof AutomationPanel !== 'undefined') {
+            if (typeof AutomationPanel !== 'undefined' && typeof AutomationPanel.addSection === 'function') {
                 setTimeout(init, 100);
             } else {
                 setTimeout(waitForPanel, 500);

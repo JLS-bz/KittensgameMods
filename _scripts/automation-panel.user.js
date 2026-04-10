@@ -15,7 +15,8 @@
         const state = {
             panel: null,
             automationLink: null,
-            initialized: false
+            initialized: false,
+            pendingSections: [] // Queue for sections added before init
         };
 
         /**
@@ -63,6 +64,12 @@
             state.panel.className = 'right-tab';
             state.panel.style.cssText = 'display:none; padding:5px; font-size:12px; overflow-y:auto;';
             queuePanel.parentElement.appendChild(state.panel);
+
+            // Add any pending sections that were queued
+            state.pendingSections.forEach(function(html) {
+                state.panel.insertAdjacentHTML('beforeend', html);
+            });
+            state.pendingSections = [];
         }
 
         /**
@@ -114,8 +121,12 @@
          * @param {string} html - HTML content to add
          */
         function addSection(html) {
-            if (!state.panel) return;
-            state.panel.insertAdjacentHTML('beforeend', html);
+            if (state.panel) {
+                state.panel.insertAdjacentHTML('beforeend', html);
+            } else {
+                // Queue if panel not ready yet
+                state.pendingSections.push(html);
+            }
         }
 
         /**
