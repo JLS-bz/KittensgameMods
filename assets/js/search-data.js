@@ -28,4 +28,8 @@ ninja.data = [{
           title: 'Auto Zebra Trading',
           description: "Automatically trade gold with zebras based on a customizable gold cap threshold. Toggle auto-trading on/off for specific seasons (Spring, Summer, Autumn, Winter). Trades the maximum amount allowed by both gold and resources.",section: "Mods",handler: () => {
               window.location.href = "/KittensgameMods/mods/3_mod/";
+            },},{id: "mods-auto-build",
+          title: 'Auto Build',
+          description: "Automatically builds buildings based on customizable selection",section: "Mods",handler: () => {
+              window.location.href = "/KittensgameMods/mods/4_mod/";
             },},];
