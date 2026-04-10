@@ -25,7 +25,59 @@
             'Unique': ['ziggurat', 'unicornPasture', 'zebraOutpost', 'zebraWorkshop', 'zebraForge', 'ivoryTemple']
         };
 
-        const state = {
+        // Priority tiers - higher tiers build first
+        const BUILD_PRIORITY_TIERS = [
+            ['field', 'pasture', 'aqueduct'],  // Tier 1 - food production
+            ['lumberMill', 'mine'],             // Tier 2 - resource production
+            null                                 // Tier 3 - everything else (null = no restriction)
+        ];
+
+        function getResourceSaturation(resourceName) {
+            // Get how full a resource is relative to its max capacity
+            if (!gamePage.resPool || !gamePage.resPool.resources) return 0;
+            const res = gamePage.resPool.resources.find(r => r.name === resourceName);
+            if (!res || !res.maxValue) return 0;
+            return res.value / res.maxValue;
+        }
+
+        function calculateBuildingSaturation(building) {
+            // Return the highest saturation ratio of all required resources
+            // This represents how close the bottleneck resource is to being full
+            if (!building.prices || building.prices.length === 0) return 0;
+            
+            let maxSaturation = 0;
+            building.prices.forEach(resource => {
+                const saturation = getResourceSaturation(resource.name);
+                if (saturation > maxSaturation) {
+                    maxSaturation = saturation;
+                }
+            });
+            return maxSaturation;
+        }
+
+        function getHighestAvailablePriorityTier(buildings) {
+            // Return the highest priority tier index that has buildable buildings
+            for (let i = 0; i < BUILD_PRIORITY_TIERS.length; i++) {
+                const tier = BUILD_PRIORITY_TIERS[i];
+                if (tier === null) return i; // Unrestricted tier
+                
+                // Check if any building in this tier is buildable
+                for (const buildingName of tier) {
+                    const building = buildings.find(b => b.name === buildingName);
+                    if (building && building.unlocked && isBuildingEnabled(building) && canBuildBuilding(building)) {
+                        return i;
+                    }
+                }
+            }
+            return BUILD_PRIORITY_TIERS.length - 1; // Default to last tier
+        }
+
+        function isBuildingInPriorityTier(building, tierIndex) {
+            // Check if building is in the specified priority tier
+            const tier = BUILD_PRIORITY_TIERS[tierIndex];
+            if (tier === null) return true; // Unrestricted tier includes everything
+            return tier.includes(building.name);
+        }
             running: false,
             enabled: true,
             config: {},
@@ -254,9 +306,10 @@
                     return;
                 }
 
-                // Find the cheapest buildable building that's enabled
-                let cheapestBuilding = null;
-                let cheapestCost = Infinity;
+                // Find buildable building using priority tiers and resource saturation
+                let selectedBuilding = null;
+                let highestSaturation = -1;
+                const priorityTier = getHighestAvailablePriorityTier(buildings);
 
                 buildings.forEach(building => {
                     // Skip buildings that aren't unlocked/visible yet
@@ -270,22 +323,30 @@
                         return;
                     }
 
+                    // Only consider buildings in the current priority tier
+                    if (!isBuildingInPriorityTier(building, priorityTier)) {
+                        console.debug(`[AutoBuild] Not in priority tier: ${building.name}`);
+                        return;
+                    }
+
                     if (!canBuildBuilding(building)) {
                         return;
                     }
 
-                    const cost = calculateBuildingCost(building);
-                    if (cost > 0 && cost < cheapestCost) {
-                        console.debug(`[AutoBuild] Candidate: ${building.name} costs ${cost}`);
-                        cheapestCost = cost;
-                        cheapestBuilding = building;
+                    // Pick building with highest resource saturation (closest to maxing out)
+                    const saturation = calculateBuildingSaturation(building);
+                    console.debug(`[AutoBuild] Candidate: ${building.name} saturation: ${(saturation * 100).toFixed(1)}%`);
+                    
+                    if (saturation > highestSaturation) {
+                        highestSaturation = saturation;
+                        selectedBuilding = building;
                     }
                 });
 
-                // Build the cheapest buildable building
-                if (cheapestBuilding) {
-                    console.log('[AutoBuild] Attempting to build:', cheapestBuilding.name, 'cost:', cheapestCost);
-                    buildBuilding(cheapestBuilding);
+                // Build the selected building
+                if (selectedBuilding) {
+                    console.log('[AutoBuild] Attempting to build:', selectedBuilding.name, 'saturation:', (highestSaturation * 100).toFixed(1) + '%');
+                    buildBuilding(selectedBuilding);
                     state.lastBuildTime = Date.now();
                 } else {
                     console.debug('[AutoBuild] No buildable buildings found');
