@@ -28,6 +28,11 @@
             <i class="fa-solid fa-file-download"></i> Download
           </a>
         {% endif %}
+        {% if mod.requires_mod %}
+          <button class="btn btn-sm btn-requires-mod" disabled>
+            {{ mod.requires_mod }}
+          </button>
+        {% endif %}
       </div>
     </div>
   </div>

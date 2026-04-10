@@ -1,8 +1,8 @@
 ---
 layout: page
 title: Automation Panel
-description: Adds a third panel tab called "Automation", to the right of Log and Queue. Must be loaded first before other automation script mods that depend on it.
-img: assets/img/panel.png
+description: Adds a third panel tab called "Automation". Must be loaded first before other automation script mods that depend on it.
+img: assets/img/AutomationPanel.png
 importance: 1
 version: 1.0
 last_updated: 2026-04-09

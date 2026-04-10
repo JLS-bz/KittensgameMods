@@ -263,8 +263,8 @@ ul.task-list input[type="checkbox"] {
 // Mod Thumbnail
 
 .mod-thumbnail {
-  max-width: 150px;
-  max-height: 150px;
+  max-width: 250px;
+  max-height: 250px;
   object-fit: cover;
 }
 
@@ -274,4 +274,21 @@ ul.task-list input[type="checkbox"] {
   margin-top: 0.5rem;
   margin-bottom: 1rem;
   font-weight: 500;
+}
+
+.btn-requires-mod {
+  border: 2px solid #000 !important;
+  color: #8b0000 !important;
+  background-color: transparent !important;
+  cursor: not-allowed !important;
+  font-weight: 500;
+  
+  &:hover,
+  &:focus,
+  &:active {
+    border-color: #000 !important;
+    color: #8b0000 !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
 }
