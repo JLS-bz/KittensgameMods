@@ -45,6 +45,14 @@
          * Build the automation tab link and panel
          */
         function buildTab() {
+            // Check if already built
+            if (document.getElementById('automationLink')) {
+                console.log('[AutomationPanel] Tab already exists, skipping build');
+                state.automationLink = document.getElementById('automationLink');
+                state.panel = document.getElementById('rightTabAutomation');
+                return;
+            }
+
             // Get the link parent (where Log and Queue buttons are)
             const linkParent = document.getElementById('logLink');
             if (!linkParent || !linkParent.parentElement) {
@@ -82,6 +90,9 @@
          * Attach event listeners to tab switching
          */
         function attachListeners() {
+            // Skip if already attached
+            if (state.automationLink._listenersAttached) return;
+            
             // Automation link click handler
             state.automationLink.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -101,6 +112,9 @@
                     }
                 };
             });
+
+            // Mark listeners as attached
+            state.automationLink._listenersAttached = true;
         }
 
         /**
