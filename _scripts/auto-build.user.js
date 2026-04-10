@@ -259,12 +259,24 @@
                 let cheapestCost = Infinity;
 
                 buildings.forEach(building => {
-                    if (!isBuildingEnabled(building)) return;
+                    // Skip buildings that aren't unlocked/visible yet
+                    if (!building.unlocked) {
+                        console.debug(`[AutoBuild] Skipping locked building: ${building.name}`);
+                        return;
+                    }
+                    
+                    if (!isBuildingEnabled(building)) {
+                        console.debug(`[AutoBuild] Disabled: ${building.name}`);
+                        return;
+                    }
 
-                    if (!canBuildBuilding(building)) return;
+                    if (!canBuildBuilding(building)) {
+                        return;
+                    }
 
                     const cost = calculateBuildingCost(building);
                     if (cost > 0 && cost < cheapestCost) {
+                        console.debug(`[AutoBuild] Candidate: ${building.name} costs ${cost}`);
                         cheapestCost = cost;
                         cheapestBuilding = building;
                     }
@@ -297,6 +309,11 @@
                 }
             }
             return false;
+        }
+        
+        function isBuildingUnlocked(building) {
+            // Check if building is unlocked and visible in the game
+            return building.unlocked === true || (building.prestige && building.prestige > 0);
         }
 
         function calculateBuildingCost(building) {
