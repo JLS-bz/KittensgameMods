@@ -203,9 +203,7 @@
         // Register with AutomationPanel when ready
         waitForPanel(init);
 
+        // Return internal reference (AutoZebraTrade is set in init())
         return { init };
     })();
-
-    // Make available globally
-    window.AutoZebraTrade = AutoZebraTrade;
 })();

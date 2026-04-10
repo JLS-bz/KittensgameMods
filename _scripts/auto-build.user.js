@@ -37,10 +37,29 @@
 
         // Initialize default config
         function initConfig() {
+            let loaded = false;
             const stored = localStorage.getItem('autobuild-config');
             if (stored) {
-                state.config = JSON.parse(stored);
-            } else {
+                try {
+                    state.config = JSON.parse(stored);
+                    // Verify structure is correct
+                    for (const category in BUILDING_CATEGORIES) {
+                        if (!state.config[category]) {
+                            state.config[category] = {};
+                        }
+                        BUILDING_CATEGORIES[category].forEach(building => {
+                            if (state.config[category][building] === undefined) {
+                                state.config[category][building] = true;
+                            }
+                        });
+                    }
+                    loaded = true;
+                } catch (e) {
+                    console.warn('[AutoBuild] Failed to parse stored config:', e);
+                    loaded = false;
+                }
+            }
+            if (!loaded) {
                 // Default: all buildings enabled
                 state.config = {};
                 for (const category in BUILDING_CATEGORIES) {
@@ -49,8 +68,8 @@
                         state.config[category][building] = true;
                     });
                 }
-                saveConfig();
             }
+            saveConfig();
         }
 
         function saveConfig() {
@@ -356,15 +375,9 @@
 
         waitForPanel();
 
+        // Return public API (this is internal, AutoBuild is set in init())
         return {
-            toggle: function() {
-                state.running = !state.running;
-            },
-            setEnabled: function(enabled) {
-                state.enabled = enabled;
-            }
+            init: init
         };
     })();
-
-    window.AutoBuild = AutoBuild;
 })();
