@@ -81,7 +81,7 @@
             `;
 
             // Add section to the automation panel
-            AutomationPanel.addSection(sectionHTML);
+            window.AutomationPanel.addSection(sectionHTML);
 
             // Attach event listeners after section is added
             setTimeout(function() {
@@ -307,10 +307,10 @@
 
         // Wait for Automation Panel to be ready
         function waitForPanel() {
-            if (typeof AutomationPanel !== 'undefined' && typeof AutomationPanel.addSection === 'function') {
+            if (window.AutomationPanel && typeof window.AutomationPanel.addSection === 'function') {
                 setTimeout(init, 100);
             } else {
-                setTimeout(waitForPanel, 500);
+                setTimeout(waitForPanel, 200);
             }
         }
 

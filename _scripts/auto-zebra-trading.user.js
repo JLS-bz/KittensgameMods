@@ -5,6 +5,7 @@
 // @description  Automate gold trading with zebras based on customizable threshold
 // @author       JLS-bz
 // @match        https://kittensgame.com/*
+// @require      https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/automation-panel.user.js
 // @grant        none
 // ==/UserScript==
 
