@@ -5,7 +5,6 @@
 // @description  Automatically builds buildings based on customizable settings
 // @author       JLS-bz
 // @match        https://kittensgame.com/*
-// @require      https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/automation-panel.user.js
 // @grant        none
 // ==/UserScript==
 

@@ -5,12 +5,26 @@
 // @description  Automate gold trading with zebras based on customizable threshold
 // @author       JLS-bz
 // @match        https://kittensgame.com/*
-// @require      https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/automation-panel.user.js
 // @grant        none
 // ==/UserScript==
 
 (function() {
     'use strict';
+
+    // Wait for Automation Panel to be available
+    function waitForPanel(callback, maxAttempts = 100) {
+        let attempts = 0;
+        const checkInterval = setInterval(() => {
+            attempts++;
+            if (window.AutomationPanel && typeof window.AutomationPanel.addSection === 'function') {
+                clearInterval(checkInterval);
+                callback();
+            } else if (attempts >= maxAttempts) {
+                clearInterval(checkInterval);
+                console.error('[AutoZebraTrade] Automation Panel not found after 100 attempts');
+            }
+        }, 100);
+    }
 
     const AutoZebraTrade = (function() {
         const SEASON_NAMES = ['spring', 'summer', 'autumn', 'winter'];

@@ -11,9 +11,19 @@
 (function() {
     'use strict';
 
-    // Prevent multiple initializations
+    // Triple-check to prevent any duplicate initialization
     if (window.AutomationPanel) {
-        console.log('[AutomationPanel] Already loaded, skipping duplicate initialization');
+        console.log('[AutomationPanel] Already loaded in window, skipping');
+        return;
+    }
+    
+    // Also check if tab already exists in DOM
+    if (document.getElementById('automationLink')) {
+        console.log('[AutomationPanel] Tab already exists in DOM, skipping');
+        // Restore reference if missing
+        if (!window.AutomationPanel) {
+            window.AutomationPanel = { addSection: function() {} };
+        }
         return;
     }
 
@@ -29,7 +39,18 @@
          * Initialize the automation panel tab
          */
         function init() {
-            if (state.initialized) return;
+            if (state.initialized) {
+                console.log('[AutomationPanel] Already initialized (state flag)');
+                return;
+            }
+            
+            // Additional check: mark on document to prevent race conditions
+            if (document.body.getAttribute('data-automation-panel-init')) {
+                console.log('[AutomationPanel] Already initialized (document flag)');
+                return;
+            }
+            
+            document.body.setAttribute('data-automation-panel-init', 'true');
             
             try {
                 buildTab();
