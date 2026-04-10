@@ -51,10 +51,21 @@
                 initialized: false
             };
             console.log(`[AutomationPanel] Registered mod: ${modName} (priority: ${priority})`);
+            
+            // Initialize immediately - don't wait
+            try {
+                console.log(`[AutomationPanel] Initializing mod: ${modName}`);
+                initFn();
+                state.modRegistry[modName].initialized = true;
+                console.log(`[AutomationPanel] ✓ ${modName} initialized`);
+            } catch (e) {
+                console.error(`[AutomationPanel] ✗ Failed to initialize ${modName}:`, e);
+            }
         }
 
         /**
          * Initialize all registered mods in priority order
+         * (Deprecated - mods now self-initialize when registered)
          */
         function initializeRegisteredMods() {
             const mods = Object.values(state.modRegistry)
@@ -63,7 +74,7 @@
 
             mods.forEach(function(mod) {
                 try {
-                    console.log(`[AutomationPanel] Initializing mod: ${mod.name}`);
+                    console.log(`[AutomationPanel] Late-initializing mod: ${mod.name}`);
                     mod.initFn();
                     mod.initialized = true;
                 } catch (e) {
@@ -95,11 +106,6 @@
                 attachPanelEventListener();
                 state.initialized = true;
                 
-                // Initialize registered mods AFTER panel is built
-                setTimeout(function() {
-                    initializeRegisteredMods();
-                }, 100);
-                
                 console.log('[AutomationPanel] Initialized successfully');
             } catch (e) {
                 console.error('[AutomationPanel] Failed to initialize:', e);
@@ -116,12 +122,17 @@
                 const btn = e.target.closest('button');
                 if (!btn) return;
                 
+                console.log('[AutomationPanel] Button clicked:', btn.id);
+                
                 // Handle Auto Build buttons
                 if (btn.id === 'autobuild-customize') {
                     e.preventDefault();
                     e.stopPropagation();
                     if (window.AutoBuild && window.AutoBuild.openConfigWindow) {
+                        console.log('[AutomationPanel] Calling AutoBuild.openConfigWindow()');
                         window.AutoBuild.openConfigWindow();
+                    } else {
+                        console.warn('[AutomationPanel] AutoBuild.openConfigWindow not available');
                     }
                     return false;
                 }
@@ -130,7 +141,10 @@
                     e.preventDefault();
                     e.stopPropagation();
                     if (window.AutoBuild && window.AutoBuild.toggleState) {
+                        console.log('[AutomationPanel] Calling AutoBuild.toggleState()');
                         window.AutoBuild.toggleState();
+                    } else {
+                        console.warn('[AutomationPanel] AutoBuild.toggleState not available');
                     }
                     return false;
                 }
@@ -140,7 +154,10 @@
                     e.preventDefault();
                     e.stopPropagation();
                     if (window.AutoZebraTrade && window.AutoZebraTrade.toggleState) {
+                        console.log('[AutomationPanel] Calling AutoZebraTrade.toggleState()');
                         window.AutoZebraTrade.toggleState();
+                    } else {
+                        console.warn('[AutomationPanel] AutoZebraTrade.toggleState not available');
                     }
                     return false;
                 }
