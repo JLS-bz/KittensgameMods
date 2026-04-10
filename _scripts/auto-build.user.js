@@ -74,8 +74,8 @@
 <div id="autobuild-section" style="padding:8px;">
   <b>Auto Build</b>
   <div style="margin-top:5px; display:flex; gap:5px;">
-    <button id="autobuild-customize" data-action="customize" style="padding:3px 8px; font-size:11px; cursor:pointer;">Customize</button>
-    <button id="autobuild-toggle" data-action="toggle" style="padding:3px 8px; font-size:11px; cursor:pointer; background-color:#006400; color:white; border:none; border-radius:3px;">Start</button>
+    <button id="autobuild-customize" style="padding:3px 8px; font-size:11px; cursor:pointer;">Customize</button>
+    <button id="autobuild-toggle" style="padding:3px 8px; font-size:11px; cursor:pointer; background-color:#006400; color:white; border:none; border-radius:3px;">Start</button>
     <span id="autobuild-status" style="font-size:11px; margin-left:5px; align-self:center;">● Idle</span>
   </div>
 </div>
@@ -84,23 +84,55 @@
             // Add section to the automation panel
             window.AutomationPanel.addSection(sectionHTML);
 
-            // Use event delegation - attach listeners to document for button clicks
+            // Attach listeners with retries to ensure buttons exist
+            attachButtonListeners();
+            
+            // Mark that Auto Build is initialized so Zebra Trading knows to wait
             setTimeout(function() {
-                document.addEventListener('click', handleButtonClick, true);
-            }, 200);
+                window.AutoBuildInitialized = true;
+            }, 50);
         }
 
-        function handleButtonClick(e) {
-            const action = e.target.getAttribute('data-action');
+        function attachButtonListeners() {
+            let attempts = 0;
+            const maxAttempts = 20;
             
-            if (action === 'customize' && e.target.id === 'autobuild-customize') {
-                e.preventDefault();
-                openConfigWindow();
-            } else if (action === 'toggle' && e.target.id === 'autobuild-toggle') {
-                e.preventDefault();
-                state.running = !state.running;
-                updateToggleButton(e.target);
-            }
+            const tryAttach = function() {
+                const customBtn = document.getElementById('autobuild-customize');
+                const toggleBtn = document.getElementById('autobuild-toggle');
+                
+                if (customBtn && toggleBtn) {
+                    // Remove any existing listeners first
+                    customBtn.replaceWith(customBtn.cloneNode(true));
+                    toggleBtn.replaceWith(toggleBtn.cloneNode(true));
+                    
+                    // Get fresh references
+                    const newCustomBtn = document.getElementById('autobuild-customize');
+                    const newToggleBtn = document.getElementById('autobuild-toggle');
+                    
+                    if (newCustomBtn) {
+                        newCustomBtn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            openConfigWindow();
+                        });
+                    }
+                    
+                    if (newToggleBtn) {
+                        newToggleBtn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            state.running = !state.running;
+                            updateToggleButton(newToggleBtn);
+                        });
+                    }
+                } else if (attempts < maxAttempts) {
+                    attempts++;
+                    setTimeout(tryAttach, 100);
+                }
+            };
+            
+            tryAttach();
         }
 
         function updateToggleButton(btn) {
