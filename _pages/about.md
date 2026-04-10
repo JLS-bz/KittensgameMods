@@ -8,11 +8,8 @@ profile:
   align: right
   image: prof_pic.png
   image_circular: false
-  more_info: >
-    <p><strong>Installation Methods</strong></p>
-    <p>• Copy & Paste to Console</p>
-    <p>• Tampermonkey / Violentmonkey</p>
-    <p><a href="https://www.reddit.com/r/kittensgame/">Kittens Game Reddit</a></p>
+  
+
 
 selected_papers: false # hide publications section
 social: true # includes social icons at the bottom of the page
