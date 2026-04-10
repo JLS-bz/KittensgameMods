@@ -63,6 +63,17 @@
                 addToPanel();
                 startBuildLoop();
                 console.log('[AutoBuild] Initialized successfully');
+                
+                // Expose state and functions globally for Automation Panel
+                window.AutoBuild = {
+                    state: state,
+                    openConfigWindow: openConfigWindow,
+                    toggleState: function() {
+                        state.running = !state.running;
+                        const btn = document.getElementById('autobuild-toggle');
+                        if (btn) updateToggleButton(btn);
+                    }
+                };
             } catch (e) {
                 console.error('[AutoBuild] Failed to initialize:', e);
             }
@@ -83,45 +94,10 @@
 
             // Add section to the automation panel
             window.AutomationPanel.addSection(sectionHTML);
-
-            // Attach listeners immediately - AutomationPanel.addSection is synchronous
-            attachButtonListeners();
-            
-            // Mark that Auto Build is initialized so Zebra Trading knows to wait
-            window.AutoBuildInitialized = true;
         }
 
         function attachButtonListeners() {
-            let attempts = 0;
-            const maxAttempts = 30;
-            
-            const tryAttach = function() {
-                const customBtn = document.getElementById('autobuild-customize');
-                const toggleBtn = document.getElementById('autobuild-toggle');
-                
-                if (customBtn && toggleBtn) {
-                    // Set up click handlers directly (not through addEventListener to avoid duplicates)
-                    customBtn.onclick = function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        openConfigWindow();
-                        return false;
-                    };
-                    
-                    toggleBtn.onclick = function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        state.running = !state.running;
-                        updateToggleButton(toggleBtn);
-                        return false;
-                    };
-                } else if (attempts < maxAttempts) {
-                    attempts++;
-                    setTimeout(tryAttach, 50);
-                }
-            };
-            
-            tryAttach();
+            // This is now handled by Automation Panel's event delegation
         }
 
         function updateToggleButton(btn) {
@@ -369,10 +345,12 @@
 
         // Wait for Automation Panel to be ready
         function waitForPanel() {
-            if (window.AutomationPanel && typeof window.AutomationPanel.addSection === 'function') {
-                setTimeout(init, 100);
+            if (window.AutomationPanel && typeof window.AutomationPanel.registerMod === 'function') {
+                // Register Auto Build with priority 0 (runs first)
+                window.AutomationPanel.registerMod('autobuild', init, 0);
+                console.log('[AutoBuild] Registered with Automation Panel');
             } else {
-                setTimeout(waitForPanel, 200);
+                setTimeout(waitForPanel, 100);
             }
         }
 

@@ -11,30 +11,23 @@
 (function() {
     'use strict';
 
-    // Wait for Automation Panel AND Auto Build to be available
-    // Ensures Auto Build loads first, then Zebra Trading loads
-    function waitForPanel(callback, maxAttempts = 300) {
+    // Wait for Automation Panel to be available
+    // Register with Automation Panel to ensure controlled initialization order
+    function waitForPanel(callback, maxAttempts = 100) {
         let attempts = 0;
         const checkInterval = setInterval(() => {
             attempts++;
-            
-            const panelReady = window.AutomationPanel && typeof window.AutomationPanel.addSection === 'function';
-            const autoBuildReady = window.AutoBuildInitialized === true;
-            
-            if (panelReady && autoBuildReady) {
+            if (window.AutomationPanel && typeof window.AutomationPanel.registerMod === 'function') {
                 clearInterval(checkInterval);
-                callback();
+                // Register Zebra Trading with priority 1 (runs after Auto Build)
+                window.AutomationPanel.registerMod('zebratrade', callback, 1);
+                console.log('[AutoZebraTrade] Registered with Automation Panel');
             } else if (attempts >= maxAttempts) {
                 clearInterval(checkInterval);
-                // Timeout - if panel exists, proceed anyway
-                if (panelReady) {
-                    console.log('[AutoZebraTrade] Proceeding without waiting for Auto Build init');
-                    callback();
-                } else {
-                    console.error('[AutoZebraTrade] Automation Panel not found after timeout');
-                }
+                console.error('[AutoZebraTrade] Automation Panel not found, initializing standalone');
+                callback();
             }
-        }, 50);
+        }, 100);
     }
 
     const AutoZebraTrade = (function() {
@@ -181,44 +174,34 @@
 
             window.AutomationPanel.addSection(HTML);
 
-            // Handle Start/Stop button
-            const toggleBtn = document.getElementById('toggleAutoTrade');
-            if (toggleBtn) {
-                toggleBtn.addEventListener('click', function() {
+            // Start auto-running if enabled
+            if (state.enabled) {
+                state.interval = setInterval(run, 2000);
+            }
+
+            // Expose toggleState globally for Automation Panel
+            window.AutoZebraTrade = {
+                toggleState: function() {
                     state.enabled = !state.enabled;
+                    const toggleBtn = document.getElementById('toggleAutoTrade');
+                    if (toggleBtn) {
+                        toggleBtn.innerText = state.enabled ? 'Stop' : 'Start';
+                    }
                     if (state.enabled) {
                         state.interval = setInterval(run, 2000);
-                        this.innerText = 'Stop';
                         window.AutomationPanel.setStatus('tradeStatus', 'Running...');
                     } else {
                         clearInterval(state.interval);
-                        this.innerText = 'Start';
                         window.AutomationPanel.setStatus('tradeStatus', 'Idle');
                     }
-                });
-            }
-
-            // Update threshold when input changes
-            const thresholdInput = document.getElementById('goldThresholdInput');
-            if (thresholdInput) {
-                thresholdInput.addEventListener('change', syncSettings);
-            }
+                }
+            };
 
             console.log('[AutoZebraTrade] Initialized successfully');
         }
 
-        // Auto-initialize when Automation Panel is ready
-        if (window.AutomationPanel) {
-            init();
-        } else {
-            // Wait for AutomationPanel to load
-            const checkInterval = setInterval(function() {
-                if (window.AutomationPanel) {
-                    clearInterval(checkInterval);
-                    init();
-                }
-            }, 500);
-        }
+        // Register with AutomationPanel when ready
+        waitForPanel(init);
 
         return { init };
     })();
