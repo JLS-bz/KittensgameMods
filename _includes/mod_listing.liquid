@@ -24,7 +24,8 @@
           </a>
         {% endif %}
         {% if mod.download_url %}
-          <a href="#" class="btn btn-sm btn-secondary mod-download-btn" data-url="{{ mod.download_url }}" data-filename="JLSbz-kitten-turbo.txt">
+          {% assign filename = mod.title | downcase | replace: " ", "-" | append: ".txt" | prepend: "JLSbz-" %}
+          <a href="#" class="btn btn-sm btn-secondary mod-download-btn" data-url="{{ mod.download_url }}" data-filename="{{ filename }}">
             <i class="fa-solid fa-file-download"></i> Download
           </a>
         {% endif %}

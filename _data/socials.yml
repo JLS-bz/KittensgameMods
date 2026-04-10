@@ -1,9 +1,0 @@
-# this file contains the social media links and usernames of the author
-# the socials will be displayed in the order they are defined here
-# for more information, please refer to the documentation of jekyll-socials plugin: https://github.com/george-gca/jekyll-socials
-github_username: JLS-bz # your GitHub username
-discord: # Discord invite link
-  logo: https://discord.com/assets/3437c10597c1526c3dbd98e50cf8093d.png
-  title: "Kittensgame Discord"
-  url: https://discord.com/invite/2arBf9K
-rss_icon: true # comment this line to hide the RSS icon
