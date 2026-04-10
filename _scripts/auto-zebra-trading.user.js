@@ -12,26 +12,29 @@
     'use strict';
 
     // Wait for Automation Panel AND Auto Build to be available
-    // Ensures Auto Build loads first, then Zebra Trading
-    function waitForPanel(callback, maxAttempts = 200) {
+    // Ensures Auto Build loads first, then Zebra Trading loads
+    function waitForPanel(callback, maxAttempts = 300) {
         let attempts = 0;
         const checkInterval = setInterval(() => {
             attempts++;
-            if (window.AutomationPanel && typeof window.AutomationPanel.addSection === 'function' &&
-                window.AutoBuildInitialized) {
+            
+            const panelReady = window.AutomationPanel && typeof window.AutomationPanel.addSection === 'function';
+            const autoBuildReady = window.AutoBuildInitialized === true;
+            
+            if (panelReady && autoBuildReady) {
                 clearInterval(checkInterval);
-                // Give a small buffer to ensure everything is settled
-                setTimeout(callback, 50);
+                callback();
             } else if (attempts >= maxAttempts) {
                 clearInterval(checkInterval);
-                // Fallback: if Auto Build hasn't initialized, just proceed anyway
-                if (window.AutomationPanel && typeof window.AutomationPanel.addSection === 'function') {
-                    setTimeout(callback, 50);
+                // Timeout - if panel exists, proceed anyway
+                if (panelReady) {
+                    console.log('[AutoZebraTrade] Proceeding without waiting for Auto Build init');
+                    callback();
                 } else {
-                    console.error('[AutoZebraTrade] Automation Panel not found after 200 attempts');
+                    console.error('[AutoZebraTrade] Automation Panel not found after timeout');
                 }
             }
-        }, 100);
+        }, 50);
     }
 
     const AutoZebraTrade = (function() {

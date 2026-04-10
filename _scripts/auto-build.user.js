@@ -84,51 +84,40 @@
             // Add section to the automation panel
             window.AutomationPanel.addSection(sectionHTML);
 
-            // Attach listeners with retries to ensure buttons exist
+            // Attach listeners immediately - AutomationPanel.addSection is synchronous
             attachButtonListeners();
             
             // Mark that Auto Build is initialized so Zebra Trading knows to wait
-            setTimeout(function() {
-                window.AutoBuildInitialized = true;
-            }, 50);
+            window.AutoBuildInitialized = true;
         }
 
         function attachButtonListeners() {
             let attempts = 0;
-            const maxAttempts = 20;
+            const maxAttempts = 30;
             
             const tryAttach = function() {
                 const customBtn = document.getElementById('autobuild-customize');
                 const toggleBtn = document.getElementById('autobuild-toggle');
                 
                 if (customBtn && toggleBtn) {
-                    // Remove any existing listeners first
-                    customBtn.replaceWith(customBtn.cloneNode(true));
-                    toggleBtn.replaceWith(toggleBtn.cloneNode(true));
+                    // Set up click handlers directly (not through addEventListener to avoid duplicates)
+                    customBtn.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        openConfigWindow();
+                        return false;
+                    };
                     
-                    // Get fresh references
-                    const newCustomBtn = document.getElementById('autobuild-customize');
-                    const newToggleBtn = document.getElementById('autobuild-toggle');
-                    
-                    if (newCustomBtn) {
-                        newCustomBtn.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            openConfigWindow();
-                        });
-                    }
-                    
-                    if (newToggleBtn) {
-                        newToggleBtn.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            state.running = !state.running;
-                            updateToggleButton(newToggleBtn);
-                        });
-                    }
+                    toggleBtn.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        state.running = !state.running;
+                        updateToggleButton(toggleBtn);
+                        return false;
+                    };
                 } else if (attempts < maxAttempts) {
                     attempts++;
-                    setTimeout(tryAttach, 100);
+                    setTimeout(tryAttach, 50);
                 }
             };
             
