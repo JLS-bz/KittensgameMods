@@ -2,16 +2,13 @@
 layout: about
 title: about
 permalink: /
-subtitle: Quality of Life & Automation Scripts for Kittens Game
+subtitle: 
 
 profile:
   align: right
   image: prof_pic.png
   image_circular: false
   
-
-
-
 latest_posts:
   enabled: false # hide blog posts
 ---
