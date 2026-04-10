@@ -22,6 +22,10 @@ ninja.data = [{
               window.location.href = "/KittensgameMods/mods/1_mod/";
             },},{id: "mods-automation-panel",
           title: 'Automation Panel',
-          description: "Adds a third panel tab called &quot;Automation&quot;, to the right of Log and Queue. Must be loaded first before other automation script mods that depend on it.",section: "Mods",handler: () => {
+          description: "Adds a third panel tab called &quot;Automation&quot;. Must be loaded first before other automation script mods that depend on it.",section: "Mods",handler: () => {
               window.location.href = "/KittensgameMods/mods/2_mod/";
+            },},{id: "mods-auto-zebra-trading",
+          title: 'Auto Zebra Trading',
+          description: "Automatically trade gold with zebras based on a customizable gold cap threshold. Toggle auto-trading on/off for specific seasons (Spring, Summer, Autumn, Winter). Trades the maximum amount allowed by both gold and resources.",section: "Mods",handler: () => {
+              window.location.href = "/KittensgameMods/mods/3_mod/";
             },},];
