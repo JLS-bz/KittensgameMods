@@ -1,23 +1,30 @@
 <div class="mod-item">
   <div class="row">
-    {% if project.img %}
+    {% if mod.img %}
     <div class="col-md-3">
-      {% include figure.liquid loading="eager" path=project.img alt=project.title class="img-fluid mod-thumbnail" %}
+      {% include figure.liquid loading="eager" path=mod.img alt=mod.title class="img-fluid mod-thumbnail" %}
     </div>
     <div class="col-md-9">
     {% else %}
     <div class="col-md-12">
     {% endif %}
-      <h3 class="mod-title">{{ project.title }}</h3>
-      <p class="mod-description">{{ project.description }}</p>
+      <h3 class="mod-title">{{ mod.title }}</h3>
+      <p class="mod-description">{{ mod.description }}</p>
+      {% if mod.version and mod.last_updated %}
+        {% assign date_parts = mod.last_updated | split: '-' %}
+        {% assign month = date_parts[1] | plus: 0 %}
+        {% assign day = date_parts[2] | plus: 0 %}
+        {% assign year = date_parts[0] %}
+        <p class="mod-version">Version {{ mod.version }} (Updated: {{ month }}/{{ day }}/{{ year }})</p>
+      {% endif %}
       <div class="mod-actions">
-        {% if project.install_url %}
-          <a href="{{ project.install_url }}" class="btn btn-sm btn-primary" target="_blank">
+        {% if mod.install_url %}
+          <a href="#" class="btn btn-sm btn-primary mod-install-btn" data-url="{{ mod.install_url }}">
             <i class="fa-solid fa-download"></i> Install
           </a>
         {% endif %}
-        {% if project.download_url %}
-          <a href="{{ project.download_url }}" class="btn btn-sm btn-secondary" target="_blank">
+        {% if mod.download_url %}
+          <a href="#" class="btn btn-sm btn-secondary mod-download-btn" data-url="{{ mod.download_url }}" data-filename="JLSbz-kitten-turbo.txt">
             <i class="fa-solid fa-file-download"></i> Download
           </a>
         {% endif %}

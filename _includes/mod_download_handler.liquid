@@ -1,0 +1,37 @@
+<script>
+  // Only set up the event listener once per page
+  if (!window.modDownloadHandlerInitialized) {
+    window.modDownloadHandlerInitialized = true;
+    
+    document.addEventListener('click', function(e) {
+      // Handle install button clicks
+      if (e.target.closest('.mod-install-btn')) {
+        e.preventDefault();
+        const btn = e.target.closest('.mod-install-btn');
+        const url = btn.getAttribute('data-url');
+        
+        // Navigate to the URL directly - Tampermonkey will intercept
+        window.location.href = url;
+      }
+      
+      // Handle download button clicks
+      if (e.target.closest('.mod-download-btn')) {
+        e.preventDefault();
+        const btn = e.target.closest('.mod-download-btn');
+        const url = btn.getAttribute('data-url');
+        const filename = btn.getAttribute('data-filename');
+        
+        fetch(url)
+          .then(res => res.blob())
+          .then(blob => {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+            URL.revokeObjectURL(link.href);
+          })
+          .catch(err => console.error('Download failed:', err));
+      }
+    });
+  }
+</script>

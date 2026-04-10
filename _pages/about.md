@@ -33,13 +33,13 @@ A collection of quality-of-life and automation scripts to enhance your Kittens G
 1. Open Kittens Game in your browser
 2. Press `F12` to open Developer Tools
 3. Go to the Console tab
-4. Copy the script code from the mod page
+4. Copy the script code 
 5. Paste it into the console and press Enter
 
 **Option 2: Userscript Manager (Recommended)**
 - Install [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/)
-- Click the install link on each mod's project page
-- Scripts will run automatically on every page load
+- Click the install link under the mod's listing
+- Scripts will run automatically 
 
 
 

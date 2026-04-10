@@ -53,8 +53,8 @@ external_services:
 navbar_fixed: true
 footer_fixed: true
 search_enabled: true
-socials_in_search: true
-posts_in_search: true
+socials_in_search: false
+posts_in_search: false
 bib_search: true
 
 # Dimensions
@@ -88,7 +88,8 @@ bing_site_verification: # out your bing-site-verification ID (Bing Webmaster)
 # Blog
 # -----------------------------------------------------------------------------
 
-blog_name: al-folio # blog_name will be displayed in your blog page
+blog_name: al-folio # blog_name will be displayed in your blog page (disabled)
+blog_enabled: false # set to false to disable the blog
 blog_description: a simple whitespace theme for academics
 permalink: /blog/:year/:title/
 lsi: false # produce an index for related posts
@@ -156,8 +157,8 @@ collections:
   news:
     defaults:
       layout: post
-    output: true
-  projects:
+    output: false
+  mods:
     output: true
   teachings:
     output: true
@@ -399,12 +400,12 @@ enable_openpanel_analytics: false # enables Openpanel analytics (https://openpan
 enable_google_verification: false # enables google site verification
 enable_bing_verification: false # enables bing site verification
 enable_cookie_consent: false # enables GDPR-compliant cookie consent dialog (https://github.com/orestbida/cookieconsent)
-enable_masonry: true # enables automatic project cards arrangement
+enable_masonry: true # enables automatic mod cards arrangement
 enable_math: true # enables math typesetting (uses MathJax)
 enable_tooltips: false # enables automatic tooltip links generated for each section titles on pages and posts
 enable_darkmode: true # enables switching between light/dark modes
 enable_navbar_social: false # enables displaying social links in the navbar on the about page
-enable_project_categories: true # enables categorization of projects into multiple categories
+enable_mod_categories: false # enables categorization of mods into multiple categories
 enable_medium_zoom: true # enables image zoom feature (as on medium.com)
 enable_progressbar: true # enables a horizontal progress bar linked to the vertical scroll position
 enable_video_embedding: false # enables video embedding for bibtex entries. If false, the button opens the video link in a new window.
@@ -456,6 +457,11 @@ third_party_libraries:
         library: "https://cdn.jsdelivr.net/npm/echarts@{{version}}/dist/echarts.min.js"
         dark_theme: "https://cdn.jsdelivr.net/npm/echarts@{{version}}/theme/dark-fresh-cut.js"
     version: "5.5.0"
+  fontawesome:
+    integrity:
+      css: "sha256-sSru7D59fIkJJV5z1gO8Zn8LBe+Xa46t+Up67s3b7/A="
+    url:
+      css: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
   google_fonts:
     url:
       fonts: "https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&display=swap"
@@ -659,7 +665,7 @@ jsonresume:
   - work
   - education
   - publications
-  - projects
+  - mods
   - volunteer
   - awards
   - certificates

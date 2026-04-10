@@ -1,10 +1,13 @@
 ---
 layout: page
-title: project 9
-description: another project with an image 🎉
-img: assets/img/6.jpg
-importance: 4
-category: fun
+title: Kitten Turbo Speed
+description: Set custom game speed multipliers (1x, 25x, 50x, 75x, 100x) to accelerate your gameplay
+img: assets/img/speedup.png
+importance: 1
+version: 1.0
+last_updated: 2026-04-09
+install_url: https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/kitten-turbo.user.js
+download_url: https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/kitten-turbo.user.js
 ---
 
 Every project has a beautiful feature showcase page.
@@ -43,8 +46,8 @@ To give your project a background in the portfolio page, just add the img tag to
     This image can also have a caption. It's like magic.
 </div>
 
-You can also put regular text between your rows of images.
-Say you wanted to write a little bit about your project before you posted the rest of the images.
+You can also put regular text between your rows of images, even citations {% cite einstein1950meaning %}.
+Say you wanted to write a bit about your project before you posted the rest of the images.
 You describe how you toiled, sweated, _bled_ for your project, and then... you reveal its glory in the next row of images.
 
 <div class="row justify-content-sm-center">
