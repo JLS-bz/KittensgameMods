@@ -14,22 +14,24 @@
     const AutoBuild = (function() {
         // Building categories (using camelCase names as found in game)
         const BUILDING_CATEGORIES = {
-            'Housing': ['hut', 'mansion', 'hotel'],
-            'Production': ['farm', 'pasture', 'aqueduct', 'mine', 'quarry', 'lumberMill', 'oilWell', 'smelter', 'brewery'],
+            'Food': ['catnipField', 'pasture', 'aqueduct'],
+            'Population': ['hut', 'logHouse', 'mansion'],
             'Science': ['library', 'academy', 'observatory', 'biolab'],
+            'Storage': ['barn', 'warehouse', 'harbour'],
+            'Resources': ['mine', 'quarry', 'lumberMill', 'oilWell', 'accelerator'],
+            'Industry': ['steamworks', 'magneto', 'smelter', 'calciner', 'factory', 'reactor'],
             'Culture': ['amphitheatre', 'chapel', 'temple'],
-            'Storage': ['barn', 'warehouse'],
-            'Trade': ['harbor', 'tradepost', 'mint'],
-            'Industry': ['workshop', 'factory', 'steamworks', 'magneto', 'calciner'],
-            'Advanced': ['reactor', 'accelerator', 'chronosphere', 'aiCore'],
-            'Unique': ['ziggurat', 'unicornPasture', 'zebraOutpost', 'zebraWorkshop', 'zebraForge', 'ivoryTemple']
+            'Other': ['workshop', 'tradepost', 'mint', 'unicornPasture', 'brewery'],
+            'MegaStructures': ['ziggurat', 'chronosphere', 'aiCore'],
+            'Upgraded': ['solarFarm', 'hydroPlant', 'dataCenter', 'broadcastTower', 'spaceport'],
+            'Zebras': ['zebraOutpost', 'zebraWorkshop', 'zebraForge', 'ivoryTemple']
         };
 
         // Priority tiers - higher tiers build first
         const BUILD_PRIORITY_TIERS = [
-            ['field', 'pasture', 'aqueduct'],  // Tier 1 - food production
-            ['lumberMill', 'mine'],             // Tier 2 - resource production
-            null                                 // Tier 3 - everything else (null = no restriction)
+            ['catnipField', 'pasture', 'aqueduct'],  // Tier 1 - food production
+            ['lumberMill', 'mine', 'quarry'],        // Tier 2 - resource production
+            null                                      // Tier 3 - everything else (null = no restriction)
         ];
 
         function getResourceSaturation(resourceName) {

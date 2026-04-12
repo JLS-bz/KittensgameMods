@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Auto Build
-description: Automatically builds buildings based on smart prioritization and resource saturation. Now uses the queue system so it works on any tab! Start and stop the automation with a button.
+description: Automatically builds buildings based on customizable selection, prioritizing the cheapest options. Start and stop the automation with a button.
 img: /assets/img/4.jpg
 importance: 3
 version: 1.2
@@ -15,13 +15,17 @@ requires_mod: "Requires Automation Panel"
 ## Settings
 
 Click **Customize** to open the configuration window where you can toggle auto-building for:
-- **Housing**: Hut, Dome, Log House, Mansion, Hotel
-- **Production**: Farm, Mine, Lumbermill, Aqueduct, Pasture, Smelter, Brewery
-- **Science**: Library, Academy, Observatory, Laboratory, Research Center
-- **Culture**: Amphitheater, Temple, Statue, Shrine, Cathedral
-- **Management**: Warehouse, Granary, Barracks, Market, Trade Post
-- **Military**: Watchtower, Wall, Garrison, Armory
-- **Unique**: Ziggurat, Pyramid, Sungate, Lighthouse, Hydro Plant
+- **Food**: Catnip Field, Pasture, Aqueduct
+- **Population**: Hut, Log House, Mansion
+- **Science**: Library, Academy, Observatory, Bio Lab
+- **Storage**: Barn, Warehouse, Harbour
+- **Resources**: Mine, Quarry, Lumber Mill, Oil Well, Accelerator
+- **Industry**: Steamworks, Magneto, Smelter, Calciner, Factory, Reactor
+- **Culture**: Amphitheatre, Chapel, Temple
+- **Other**: Workshop, Tradepost, Mint, Unicorn Pasture, Brewery
+- **Mega Structures**: Ziggurat, Chronosphere, AI Core
+- **Upgraded**: Solar Farm, Hydro Plant, Data Center, Broadcast Tower, Spaceport
+- **Zebras**: Zebra Outpost, Zebra Workshop, Zebra Forge, Ivory Temple
 
 ## Usage
 
