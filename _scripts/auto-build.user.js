@@ -232,22 +232,20 @@
                 }
             }
             
-            // Fallback: add to automation panel if queue panel not available
-            if (window.AutomationPanel && typeof window.AutomationPanel.addSection === 'function') {
-                const sectionHTML = `
-<div id="autobuild-section" style="padding:8px;">
-  <b style="font-size:14px;">Auto Build</b>
+            // Fallback: Create standalone floating UI if queue panel not available
+            const standaloneUI = document.createElement('div');
+            standaloneUI.id = 'autobuild-section';
+            standaloneUI.style.cssText = 'position:fixed; bottom:20px; right:20px; background:#2a2a2a; border:1px solid #666; padding:8px; border-radius:3px; z-index:9999;';
+            standaloneUI.innerHTML = `
+  <b style="font-size:12px; color:#fff;">Auto Build</b>
   <div style="margin-top:5px; display:flex; gap:5px;">
     <button id="autobuild-customize" style="padding:3px 8px; font-size:11px; cursor:pointer;">Customize</button>
     <button id="autobuild-toggle" style="padding:3px 8px; font-size:11px; cursor:pointer; background-color:#006400; color:white; border:none; border-radius:3px;">Start</button>
-    <span id="autobuild-status" style="font-size:11px; margin-left:5px; align-self:center;">● Idle</span>
+    <span id="autobuild-status" style="font-size:11px; margin-left:5px; align-self:center; color:#fff;">● Idle</span>
   </div>
-</div>
-                `;
-                window.AutomationPanel.addSection(sectionHTML);
-                // Delay listener attachment for Automation Panel version
-                setTimeout(() => attachButtonListeners(), 50);
-            }
+            `;
+            document.body.appendChild(standaloneUI);
+            attachButtonListeners();
         }
 
         function attachButtonListeners() {
@@ -576,22 +574,25 @@
             }
         }
 
-        // Wait for Automation Panel to be ready
-        function waitForPanel() {
-            if (window.AutomationPanel && typeof window.AutomationPanel.registerMod === 'function') {
-                // Register Auto Build with priority 0 (runs first)
-                window.AutomationPanel.registerMod('autobuild', init, 0);
-                console.log('[AutoBuild] Registered with Automation Panel');
-            } else {
-                setTimeout(waitForPanel, 100);
+        // Initialize Auto Build immediately (standalone, no panel dependency)
+        function start() {
+            try {
+                init();
+                console.log('[AutoBuild] Started independently');
+            } catch (e) {
+                console.error('[AutoBuild] Startup failed:', e);
             }
         }
 
-        waitForPanel();
+        // Start immediately when script loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', start);
+        } else {
+            // Page already loaded
+            setTimeout(start, 500);
+        }
 
-        // Return public API (this is internal, AutoBuild is set in init())
+        // Return public API
         return {
-            init: init
-        };
     })();
 })();

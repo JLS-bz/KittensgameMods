@@ -1,14 +1,13 @@
 ---
 layout: page
 title: Auto Build
-description: Automatically builds buildings based on customizable selection, prioritizing the cheapest options. Start and stop the automation with a button.
+description: Automatically builds buildings based on smart prioritization and resource saturation. Works on any game tab thanks to queue system integration. Standalone - no dependencies!
 img: /assets/img/4.jpg
 importance: 3
 version: 1.2
 last_updated: 2026-04-12
 install_url: https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/auto-build.user.js
 download_url: https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/auto-build.user.js
-requires_mod: "Requires Automation Panel"
 ---
 
 
@@ -29,9 +28,14 @@ Click **Customize** to open the configuration window where you can toggle auto-b
 
 ## Usage
 
-1. Install the mod (requires Automation Panel)
-2. Open the Automation tab in Kittens Game
-3. Click **Customize** to select which buildings you want to auto-build
-4. Click **Start** to begin automated building
-5. The mod will continuously build the cheapest available buildings you've enabled
-6. Click **Stop** to pause automation
+1. Install the mod directly (no dependencies required)
+2. Go to **Kittens Game → Queue tab**
+3. You'll see **Auto Build** section above the queue controls
+4. Click **Customize** to select which buildings to auto-build
+5. Click **Start** to begin automation
+6. Buildings are selected intelligently based on:
+   - **Priority tiers**: Food production → Resources → Everything else
+   - **Resource saturation**: Builds when resources are close to max
+   - **Storage awareness**: Skips buildings when resources are stalled at max capacity
+7. Works on any tab - automation continues while on Log, Profile, or any other tab!
+8. Click **Stop** to pause
