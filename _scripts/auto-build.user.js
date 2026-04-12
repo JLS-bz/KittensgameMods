@@ -83,20 +83,26 @@
 
         function getQueueLength() {
             // Get current number of items in the build queue (max is 4)
-            // Try to use gamePage.bld.queue if available
-            if (gamePage && gamePage.bld && gamePage.bld.queue) {
-                return gamePage.bld.queue.length;
-            }
-            
-            // Fallback: estimate queue length from button presence in queue tab
-            // If queue is full, there typically won't be an add button or it will be disabled
+            // Queue items appear as rows in #rightTabQueue
             const queueContainer = document.querySelector('#rightTabQueue');
             if (!queueContainer) return 0;
-            const addButton = queueContainer.querySelector('button');
-            if (!addButton || addButton.disabled) {
-                return 4; // Assume full if button is missing or disabled
+            
+            // Count visible queue items (they usually have specific styling/structure)
+            // Look for divs that represent queue entries - they typically contain building/tech names
+            const queueRows = queueContainer.querySelectorAll('div');
+            let count = 0;
+            
+            for (const row of queueRows) {
+                const text = row.textContent || '';
+                // Queue items contain progress info and item names
+                // Look for indicators like "100%" or "50%" which appear in queue items
+                if (text.match(/\d+%/) && (text.length < 100)) {
+                    count++;
+                }
             }
-            return 0; // Conservative estimate if we can't determine
+            
+            // Cap result at 4 (queue max) and at least 0
+            return Math.min(Math.max(0, count - 1), 4); // -1 to exclude container itself
         }
 
         function isResourceStalled(building) {
@@ -106,17 +112,22 @@
             
             for (const resource of building.prices) {
                 const res = gamePage.resPool?.resources?.find(r => r.name === resource.name);
-                if (res) {
-                    // Check if this resource is near max and hasn't changed
-                    const saturation = res.value / (res.maxValue || 1);
-                    if (saturation > 0.98) {
-                        // Mark this building as stalled
-                        const key = building.name + '_' + resource.name;
-                        if (!state.stalledBuildings[key]) {
-                            state.stalledBuildings[key] = Date.now();
-                        }
-                        return true;
+                if (!res) continue;
+                
+                // Skip resources with no storage cap (maxValue <= 0 means not unlocked yet)
+                if ((res.maxValue || 0) <= 0) continue;
+                
+                // Check if this resource is at or very near max (>99% full)
+                // This indicates storage is full and blocking the build
+                const saturation = res.value / res.maxValue;
+                if (saturation > 0.99) {
+                    console.debug(`[AutoBuild] Storage stalled - ${resource.name}: ${res.value.toFixed(0)}/${res.maxValue} (${(saturation*100).toFixed(1)}%)`);
+                    // Mark this building as stalled
+                    const key = building.name + '_' + resource.name;
+                    if (!state.stalledBuildings[key]) {
+                        state.stalledBuildings[key] = Date.now();
                     }
+                    return true;
                 }
             }
             return false;
