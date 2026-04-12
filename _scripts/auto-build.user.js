@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kittens Game - Auto Build
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.2
 // @description  Automatically builds buildings based on customizable settings
 // @author       JLS-bz
 // @match        https://kittensgame.com/*

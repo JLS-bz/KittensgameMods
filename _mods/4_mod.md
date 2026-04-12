@@ -1,11 +1,11 @@
 ---
 layout: page
 title: Auto Build
-description: Automatically builds buildings based on customizable selection, prioritizing the cheapest options. Start and stop the automation with a button.
+description: Automatically builds buildings based on smart prioritization and resource saturation. Now uses the queue system so it works on any tab! Start and stop the automation with a button.
 img: /assets/img/4.jpg
 importance: 3
-version: 1.1
-last_updated: 2026-04-10
+version: 1.2
+last_updated: 2026-04-12
 install_url: https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/auto-build.user.js
 download_url: https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/auto-build.user.js
 requires_mod: "Requires Automation Panel"
