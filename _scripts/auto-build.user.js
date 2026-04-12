@@ -81,6 +81,47 @@
             return tier.includes(building.name);
         }
 
+        function getQueueLength() {
+            // Get current number of items in the build queue (max is 4)
+            // Try to use gamePage.bld.queue if available
+            if (gamePage && gamePage.bld && gamePage.bld.queue) {
+                return gamePage.bld.queue.length;
+            }
+            
+            // Fallback: estimate queue length from button presence in queue tab
+            // If queue is full, there typically won't be an add button or it will be disabled
+            const queueContainer = document.querySelector('#rightTabQueue');
+            if (!queueContainer) return 0;
+            const addButton = queueContainer.querySelector('button');
+            if (!addButton || addButton.disabled) {
+                return 4; // Assume full if button is missing or disabled
+            }
+            return 0; // Conservative estimate if we can't determine
+        }
+
+        function isResourceStalled(building) {
+            // Check if resources required for this building are stuck at max capacity
+            // This indicates storage needs upgrading before this building can be built
+            if (!building.prices || building.prices.length === 0) return false;
+            
+            for (const resource of building.prices) {
+                const res = gamePage.resPool?.resources?.find(r => r.name === resource.name);
+                if (res) {
+                    // Check if this resource is near max and hasn't changed
+                    const saturation = res.value / (res.maxValue || 1);
+                    if (saturation > 0.98) {
+                        // Mark this building as stalled
+                        const key = building.name + '_' + resource.name;
+                        if (!state.stalledBuildings[key]) {
+                            state.stalledBuildings[key] = Date.now();
+                        }
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         const state = {
             running: false,
             enabled: true,
@@ -88,7 +129,8 @@
             panel: null,
             configWindow: null,
             lastBuildTime: 0,
-            buildCheckInterval: 10000 // Check every 10 seconds
+            buildCheckInterval: 10000, // Check every 10 seconds
+            stalledBuildings: {} // Track buildings that fail due to storage limits
         };
 
         // Initialize default config
@@ -135,7 +177,8 @@
         function init() {
             try {
                 initConfig();
-                addToPanel();
+                // Wait a bit for queue panel to be ready
+                setTimeout(() => { addToPanel(); }, 100);
                 startBuildLoop();
                 console.log('[AutoBuild] Initialized successfully');
                 
@@ -155,8 +198,31 @@
         }
 
         function addToPanel() {
-            // Create the section HTML
-            const sectionHTML = `
+            // Try to add UI to the queue panel first (above add to queue controls)
+            const queueContainer = document.querySelector('#rightTabQueue');
+            if (queueContainer) {
+                // Find where to insert - above the first select or at the top
+                const firstSelect = queueContainer.querySelector('select');
+                if (firstSelect) {
+                    const sectionHTML = document.createElement('div');
+                    sectionHTML.id = 'autobuild-section';
+                    sectionHTML.style.cssText = 'padding:8px; margin-bottom:10px; border-bottom:1px solid #666;';
+                    sectionHTML.innerHTML = `
+  <b style="font-size:13px;">Auto Build</b>
+  <div style="margin-top:5px; display:flex; gap:5px;">
+    <button id="autobuild-customize" style="padding:3px 8px; font-size:11px; cursor:pointer;">Customize</button>
+    <button id="autobuild-toggle" style="padding:3px 8px; font-size:11px; cursor:pointer; background-color:#006400; color:white; border:none; border-radius:3px;">Start</button>
+    <span id="autobuild-status" style="font-size:11px; margin-left:5px; align-self:center;">● Idle</span>
+  </div>
+                    `;
+                    firstSelect.parentElement.insertBefore(sectionHTML, firstSelect);
+                    return;
+                }
+            }
+            
+            // Fallback: add to automation panel if queue panel not available
+            if (window.AutomationPanel && typeof window.AutomationPanel.addSection === 'function') {
+                const sectionHTML = `
 <div id="autobuild-section" style="padding:8px;">
   <b style="font-size:14px;">Auto Build</b>
   <div style="margin-top:5px; display:flex; gap:5px;">
@@ -165,10 +231,9 @@
     <span id="autobuild-status" style="font-size:11px; margin-left:5px; align-self:center;">● Idle</span>
   </div>
 </div>
-            `;
-
-            // Add section to the automation panel
-            window.AutomationPanel.addSection(sectionHTML);
+                `;
+                window.AutomationPanel.addSection(sectionHTML);
+            }
         }
 
         function attachButtonListeners() {
@@ -347,6 +412,13 @@
                     }
                 });
 
+                // Check if queue is full before building
+                const queueLength = getQueueLength();
+                if (queueLength >= 4) {
+                    console.debug('[AutoBuild] Queue is full (4/4), waiting...');
+                    return;
+                }
+
                 // Build the selected building
                 if (selectedBuilding) {
                     console.log('[AutoBuild] Attempting to build:', selectedBuilding.name, 'saturation:', (highestSaturation * 100).toFixed(1) + '%');
@@ -394,6 +466,12 @@
         function canBuildBuilding(building) {
             if (!building.prices || building.prices.length === 0) return false;
 
+            // Check if this building is stalled due to storage limits
+            if (isResourceStalled(building)) {
+                console.debug(`[AutoBuild] Building stalled (storage limit): ${building.name}`);
+                return false;
+            }
+
             // Check if we have enough resources
             for (const resource of building.prices) {
                 const resName = resource.name;
@@ -410,7 +488,7 @@
                 }
 
                 if (available < resAmount) {
-                    console.debug(`[AutoBuild] Not enough ${resName}: have ${available}, need ${resAmount}`);
+                    console.debug(`[AutoBuild] Not enough ${resName}: have ${available.toFixed(2)}/${resAmount.toFixed(2)}`);
                     return false;
                 }
             }
