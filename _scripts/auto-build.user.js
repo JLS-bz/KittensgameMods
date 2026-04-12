@@ -83,18 +83,25 @@
 
         function getQueueLength() {
             // Get current number of items in the build queue (max is 4)
-            // First check if add button is disabled - if so, queue is full
+            // Look for active queue items in the queue display
             const queueContainer = document.querySelector('#rightTabQueue');
             if (!queueContainer) return 0;
             
-            const addButton = queueContainer.querySelector('button');
-            if (addButton && addButton.disabled) {
-                console.debug('[AutoBuild] Queue add button is disabled - queue full');
-                return 4;
+            // Count visible queue item rows (they typically show progress percentage)
+            let count = 0;
+            const allDivs = queueContainer.querySelectorAll('div');
+            for (const div of allDivs) {
+                const text = div.textContent || '';
+                // Queue items contain "%" progress and "Cancel" buttons, small text content
+                if (text.includes('%') && text.includes('Cancel') && text.length < 200) {
+                    count++;
+                }
             }
             
-            // Conservative default: assume queue has space
-            return 0;
+            if (count > 0) {
+                console.debug(`[AutoBuild] Queue items detected: ${count}/4`);
+            }
+            return Math.min(count, 4);
         }
 
         function isResourceStalled(building) {
@@ -196,43 +203,42 @@
         }
 
         function addToPanel() {
-            // Try to add UI to the queue panel first (above add to queue controls)
+            // Add UI directly to the queue panel at the very top
             const queueContainer = document.querySelector('#rightTabQueue');
             if (queueContainer) {
-                // Find where to insert - above the first select or at the top
-                const firstSelect = queueContainer.querySelector('select');
-                if (firstSelect) {
-                    const sectionHTML = document.createElement('div');
-                    sectionHTML.id = 'autobuild-section';
-                    sectionHTML.style.cssText = 'padding:8px; margin-bottom:10px; border-bottom:1px solid #666;';
-                    sectionHTML.innerHTML = `
-  <b style="font-size:13px;">Auto Build</b>
-  <div style="margin-top:5px; display:flex; gap:5px;">
-    <button id="autobuild-customize" style="padding:3px 8px; font-size:11px; cursor:pointer;">Customize</button>
-    <button id="autobuild-toggle" style="padding:3px 8px; font-size:11px; cursor:pointer; background-color:#006400; color:white; border:none; border-radius:3px;">Start</button>
-    <span id="autobuild-status" style="font-size:11px; margin-left:5px; align-self:center;">● Idle</span>
+                const sectionHTML = document.createElement('div');
+                sectionHTML.id = 'autobuild-section';
+                sectionHTML.style.cssText = 'padding:10px; margin-bottom:10px; border-bottom:2px solid #999; background:#1a1a1a;';
+                sectionHTML.innerHTML = `
+  <b style="font-size:13px; color:#fff; display:block; margin-bottom:8px;">⚙ Auto Build</b>
+  <div style="display:flex; gap:5px; flex-wrap:wrap;">
+    <button id="autobuild-toggle" style="padding:5px 12px; font-size:11px; cursor:pointer; background-color:#006400; color:white; border:none; border-radius:2px; flex:1; min-width:60px;">Start</button>
+    <button id="autobuild-customize" style="padding:5px 12px; font-size:11px; cursor:pointer; background:#444; color:#fff; border:1px solid #666; border-radius:2px; flex:1; min-width:70px;">Customize</button>
   </div>
-                    `;
-                    firstSelect.parentElement.insertBefore(sectionHTML, firstSelect);
-                    attachButtonListeners();
-                    return;
-                }
+  <span id="autobuild-status" style="font-size:10px; color:#aaa; display:block; margin-top:5px;">● Status: Idle</span>
+                `;
+                queueContainer.insertBefore(sectionHTML, queueContainer.firstChild);
+                attachButtonListeners();
+                console.log('[AutoBuild] UI inserted into Queue panel');
+                return true;
             }
             
-            // Fallback: Create standalone floating UI if queue panel not available
+            // Fallback: Create standalone floating UI
+            console.log('[AutoBuild] Queue panel not found, using floating UI');
             const standaloneUI = document.createElement('div');
             standaloneUI.id = 'autobuild-section';
-            standaloneUI.style.cssText = 'position:fixed; bottom:20px; right:20px; background:#2a2a2a; border:1px solid #666; padding:8px; border-radius:3px; z-index:9999;';
+            standaloneUI.style.cssText = 'position:fixed; bottom:20px; right:20px; background:#1a1a1a; border:2px solid #999; padding:12px; border-radius:3px; z-index:9999; min-width:150px;';
             standaloneUI.innerHTML = `
-  <b style="font-size:12px; color:#fff;">Auto Build</b>
-  <div style="margin-top:5px; display:flex; gap:5px;">
-    <button id="autobuild-customize" style="padding:3px 8px; font-size:11px; cursor:pointer;">Customize</button>
-    <button id="autobuild-toggle" style="padding:3px 8px; font-size:11px; cursor:pointer; background-color:#006400; color:white; border:none; border-radius:3px;">Start</button>
-    <span id="autobuild-status" style="font-size:11px; margin-left:5px; align-self:center; color:#fff;">● Idle</span>
+  <b style="font-size:12px; color:#fff; display:block; margin-bottom:8px;">⚙ Auto Build</b>
+  <div style="display:flex; gap:5px; flex-direction:column;">
+    <button id="autobuild-toggle" style="padding:5px 10px; font-size:11px; cursor:pointer; background-color:#006400; color:white; border:none; border-radius:2px;">Start</button>
+    <button id="autobuild-customize" style="padding:5px 10px; font-size:11px; cursor:pointer; background:#444; color:#fff; border:1px solid #666; border-radius:2px;">Customize</button>
   </div>
+  <span id="autobuild-status" style="font-size:10px; color:#aaa; display:block; margin-top:5px;">● Status: Idle</span>
             `;
             document.body.appendChild(standaloneUI);
             attachButtonListeners();
+            return false;
         }
 
         function attachButtonListeners() {
