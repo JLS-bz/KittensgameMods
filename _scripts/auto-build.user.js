@@ -227,6 +227,7 @@
   </div>
                     `;
                     firstSelect.parentElement.insertBefore(sectionHTML, firstSelect);
+                    attachButtonListeners();
                     return;
                 }
             }
@@ -244,11 +245,29 @@
 </div>
                 `;
                 window.AutomationPanel.addSection(sectionHTML);
+                // Delay listener attachment for Automation Panel version
+                setTimeout(() => attachButtonListeners(), 50);
             }
         }
 
         function attachButtonListeners() {
-            // This is now handled by Automation Panel's event delegation
+            // Attach listeners to Auto Build buttons
+            const toggleBtn = document.getElementById('autobuild-toggle');
+            const customizeBtn = document.getElementById('autobuild-customize');
+            
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', () => {
+                    state.running = !state.running;
+                    updateToggleButton(toggleBtn);
+                    console.log('[AutoBuild]', state.running ? 'STARTED' : 'STOPPED');
+                });
+            }
+            
+            if (customizeBtn) {
+                customizeBtn.addEventListener('click', () => {
+                    openConfigWindow();
+                });
+            }
         }
 
         function updateToggleButton(btn) {
