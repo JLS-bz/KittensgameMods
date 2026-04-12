@@ -12,9 +12,9 @@
     'use strict';
 
     const AutoBuild = (function() {
-        // Building categories (using camelCase names as found in game)
+        // Building categories (using actual game building names)
         const BUILDING_CATEGORIES = {
-            'Food': ['catnipField', 'pasture', 'aqueduct'],
+            'Food': ['field', 'pasture', 'aqueduct'],
             'Population': ['hut', 'logHouse', 'mansion'],
             'Science': ['library', 'academy', 'observatory', 'biolab'],
             'Storage': ['barn', 'warehouse', 'harbour'],
@@ -29,9 +29,9 @@
 
         // Priority tiers - higher tiers build first
         const BUILD_PRIORITY_TIERS = [
-            ['catnipField', 'pasture', 'aqueduct'],  // Tier 1 - food production
-            ['lumberMill', 'mine', 'quarry'],        // Tier 2 - resource production
-            null                                      // Tier 3 - everything else (null = no restriction)
+            ['field', 'pasture', 'aqueduct'],  // Tier 1 - food production
+            ['lumberMill', 'mine', 'quarry'],  // Tier 2 - resource production
+            null                               // Tier 3 - everything else (null = no restriction)
         ];
 
         function getResourceSaturation(resourceName) {
@@ -105,25 +105,7 @@
         }
 
         function isResourceStalled(building) {
-            // Check if resources required for this building are stuck at max capacity
-            // This indicates storage needs upgrading before this building can be built
-            if (!building.prices || building.prices.length === 0) return false;
-            
-            for (const resource of building.prices) {
-                const res = gamePage.resPool?.resources?.find(r => r.name === resource.name);
-                if (!res) continue;
-                
-                // Skip resources with no storage cap (maxValue <= 0 means not unlocked yet)
-                if ((res.maxValue || 0) <= 0) continue;
-                
-                // Check if this resource is at or very near max (>99% full)
-                // This indicates storage is full and blocking the build
-                const saturation = res.value / res.maxValue;
-                if (saturation >= 0.99) {
-                    console.log(`[AutoBuild] ⚠ STALLED: ${building.name} blocked by ${resource.name}: ${res.value.toFixed(0)}/${res.maxValue.toFixed(0)} (${(saturation*100).toFixed(1)}%)`);
-                    return true;
-                }
-            }
+            // Removed stalling check - game allows spending resources at max capacity
             return false;
         }
 
