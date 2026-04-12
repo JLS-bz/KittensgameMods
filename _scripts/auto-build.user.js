@@ -208,9 +208,9 @@
             if (queueContainer) {
                 const sectionHTML = document.createElement('div');
                 sectionHTML.id = 'autobuild-section';
-                sectionHTML.style.cssText = 'padding:10px; margin-bottom:10px; border-bottom:2px solid #999; background:#1a1a1a;';
+                sectionHTML.style.cssText = 'padding:8px; margin-bottom:8px; border-bottom:1px solid #666;';
                 sectionHTML.innerHTML = `
-  <b style="font-size:13px; color:#fff; display:block; margin-bottom:8px;">⚙ Auto Build</b>
+  <b style="font-size:12px; display:block; margin-bottom:6px;">⚙ Auto Build</b>
   <div style="display:flex; gap:5px; flex-wrap:wrap;">
     <button id="autobuild-toggle" style="padding:5px 12px; font-size:11px; cursor:pointer; background-color:#006400; color:white; border:none; border-radius:2px; flex:1; min-width:60px;">Start</button>
     <button id="autobuild-customize" style="padding:5px 12px; font-size:11px; cursor:pointer; background:#444; color:#fff; border:1px solid #666; border-radius:2px; flex:1; min-width:70px;">Customize</button>
@@ -247,7 +247,8 @@
             const customizeBtn = document.getElementById('autobuild-customize');
             
             if (toggleBtn) {
-                toggleBtn.addEventListener('click', () => {
+                toggleBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
                     state.running = !state.running;
                     updateToggleButton(toggleBtn);
                     console.log('[AutoBuild]', state.running ? 'STARTED' : 'STOPPED');
@@ -255,7 +256,8 @@
             }
             
             if (customizeBtn) {
-                customizeBtn.addEventListener('click', () => {
+                customizeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
                     openConfigWindow();
                 });
             }
@@ -278,7 +280,7 @@
 
             const win = document.createElement('div');
             win.id = 'autobuild-config-window';
-            win.style.cssText = 'position:fixed; top:100px; left:200px; width:350px; background:#2a2a2a; border:2px solid #666; border-radius:5px; box-shadow:0 0 10px rgba(0,0,0,0.5); z-index:10000; font-family:Arial, sans-serif; font-size:12px; color:#fff;';
+            win.style.cssText = 'position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:350px; max-height:80vh; overflow-y:auto; background:#2a2a2a; border:2px solid #666; border-radius:5px; box-shadow:0 0 10px rgba(0,0,0,0.5); z-index:10000; font-family:Arial, sans-serif; font-size:12px; color:#fff;';
 
             // Header with close button
             const header = document.createElement('div');
