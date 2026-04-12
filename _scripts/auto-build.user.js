@@ -389,37 +389,8 @@
             return total;
         }
 
-        function isButtonClickable(btn) {
-            // Check if button is disabled, has disabled class, or is hidden
-            if (btn.disabled || btn.classList.contains('disabled')) {
-                return false;
-            }
-            // Check computed style - button might be red/disabled via CSS
-            const style = window.getComputedStyle(btn);
-            if (style.opacity === '0.5' || style.color === 'rgb(128, 128, 128)') {
-                return false;
-            }
-            return true;
-        }
-
         function canBuildBuilding(building) {
             if (!building.prices || building.prices.length === 0) return false;
-
-            // Also check if the button itself is clickable in the UI
-            const buttons = Array.from(document.querySelectorAll('.btn.nosel.modern'));
-            let buildButton = null;
-            for (const btn of buttons) {
-                if (btn.textContent.includes(building.label)) {
-                    buildButton = btn;
-                    break;
-                }
-            }
-            
-            // If button exists but is disabled, can't build
-            if (buildButton && !isButtonClickable(buildButton)) {
-                console.debug(`[AutoBuild] Button disabled: ${building.name}`);
-                return false;
-            }
 
             // Check if we have enough resources
             for (const resource of building.prices) {
@@ -447,30 +418,49 @@
 
         function buildBuilding(building) {
             try {
-                // Find the button element for this building by searching for the label
-                const buttons = Array.from(document.querySelectorAll('.btn.nosel.modern'));
-                let buildButton = null;
-                
-                // The building label is what appears on the button in the UI
-                for (const btn of buttons) {
-                    if (btn.textContent.includes(building.label)) {
-                        buildButton = btn;
+                // Use the Queue tab select + button method (works regardless of which tab user is viewing)
+                const queueContainer = document.querySelector('#rightTabQueue');
+                if (!queueContainer) {
+                    console.warn('[AutoBuild] Queue tab not found');
+                    return;
+                }
+
+                // Find the building select dropdown (2nd select in queue)
+                const selects = queueContainer.querySelectorAll('select');
+                if (selects.length < 2) {
+                    console.warn('[AutoBuild] Queue selects not found');
+                    return;
+                }
+
+                const buildingSelect = selects[1];
+                const addButton = queueContainer.querySelector('button');
+
+                if (!addButton) {
+                    console.warn('[AutoBuild] Queue "Add to queue" button not found');
+                    return;
+                }
+
+                // Find the building index in the select
+                let buildingIndex = -1;
+                for (let i = 0; i < buildingSelect.options.length; i++) {
+                    const option = buildingSelect.options[i];
+                    if (option.getAttribute('data-label') === building.label) {
+                        buildingIndex = i;
                         break;
                     }
                 }
-                
-                if (buildButton) {
-                    // Double-check button is clickable before clicking
-                    if (!isButtonClickable(buildButton)) {
-                        console.warn(`[AutoBuild] Button is disabled/unavailable: ${building.name}`);
-                        return;
-                    }
-                    
-                    buildButton.click();
-                    console.log('[AutoBuild] ✓ Built via UI click:', building.name);
+
+                if (buildingIndex === -1) {
+                    console.warn(`[AutoBuild] Building not found in queue select: ${building.name}`);
                     return;
                 }
-                console.warn('[AutoBuild] Could not find button for:', building.name);
+
+                // Set the select value and trigger click
+                buildingSelect.value = buildingIndex.toString();
+                buildingSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                addButton.click();
+
+                console.log('[AutoBuild] ✓ Built via queue:', building.name);
             } catch (e) {
                 console.error('[AutoBuild] Failed to build:', building.name, e);
             }
