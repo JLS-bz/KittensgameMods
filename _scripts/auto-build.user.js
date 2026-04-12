@@ -83,26 +83,18 @@
 
         function getQueueLength() {
             // Get current number of items in the build queue (max is 4)
-            // Queue items appear as rows in #rightTabQueue
+            // First check if add button is disabled - if so, queue is full
             const queueContainer = document.querySelector('#rightTabQueue');
             if (!queueContainer) return 0;
             
-            // Count visible queue items (they usually have specific styling/structure)
-            // Look for divs that represent queue entries - they typically contain building/tech names
-            const queueRows = queueContainer.querySelectorAll('div');
-            let count = 0;
-            
-            for (const row of queueRows) {
-                const text = row.textContent || '';
-                // Queue items contain progress info and item names
-                // Look for indicators like "100%" or "50%" which appear in queue items
-                if (text.match(/\d+%/) && (text.length < 100)) {
-                    count++;
-                }
+            const addButton = queueContainer.querySelector('button');
+            if (addButton && addButton.disabled) {
+                console.debug('[AutoBuild] Queue add button is disabled - queue full');
+                return 4;
             }
             
-            // Cap result at 4 (queue max) and at least 0
-            return Math.min(Math.max(0, count - 1), 4); // -1 to exclude container itself
+            // Conservative default: assume queue has space
+            return 0;
         }
 
         function isResourceStalled(building) {
@@ -120,13 +112,8 @@
                 // Check if this resource is at or very near max (>99% full)
                 // This indicates storage is full and blocking the build
                 const saturation = res.value / res.maxValue;
-                if (saturation > 0.99) {
-                    console.debug(`[AutoBuild] Storage stalled - ${resource.name}: ${res.value.toFixed(0)}/${res.maxValue} (${(saturation*100).toFixed(1)}%)`);
-                    // Mark this building as stalled
-                    const key = building.name + '_' + resource.name;
-                    if (!state.stalledBuildings[key]) {
-                        state.stalledBuildings[key] = Date.now();
-                    }
+                if (saturation >= 0.99) {
+                    console.log(`[AutoBuild] ⚠ STALLED: ${building.name} blocked by ${resource.name}: ${res.value.toFixed(0)}/${res.maxValue.toFixed(0)} (${(saturation*100).toFixed(1)}%)`);
                     return true;
                 }
             }
@@ -427,6 +414,7 @@
                     }
 
                     if (!canBuildBuilding(building)) {
+                        console.debug(`[AutoBuild] Cannot build ${building.name} (stalled or insufficient resources)`);
                         return;
                     }
 
