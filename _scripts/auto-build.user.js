@@ -594,5 +594,7 @@
 
         // Return public API
         return {
+            init: init
+        };
     })();
 })();
