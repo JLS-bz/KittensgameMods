@@ -1,8 +1,8 @@
 ---
 layout: page
 title: Auto Build
-description: Automatically builds buildings based on smart prioritization and resource saturation. Works on any game tab thanks to queue system integration. Standalone - no dependencies!
-img: /assets/img/4.jpg
+description: Automatically builds buildings based on smart prioritization and resource saturation. 
+img: /assets/img/autobuild.png
 importance: 3
 version: 1.0
 last_updated: 2026-04-12
