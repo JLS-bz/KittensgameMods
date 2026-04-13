@@ -292,3 +292,19 @@ ul.task-list input[type="checkbox"] {
     box-shadow: none !important;
   }
 }
+
+.btn-documentation {
+  border: 2px solid #000 !important;
+  color: #000 !important;
+  background-color: #fff !important;
+  font-weight: 500;
+  
+  &:hover,
+  &:focus,
+  &:active {
+    border-color: #000 !important;
+    color: #000 !important;
+    background-color: #f0f0f0 !important;
+    box-shadow: none !important;
+  }
+}

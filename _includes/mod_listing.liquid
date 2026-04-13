@@ -29,6 +29,11 @@
             Download
           </a>
         {% endif %}
+        {% if mod.documentation_url %}
+          <a href="{{ mod.documentation_url }}" class="btn btn-sm btn-documentation">
+            Documentation
+          </a>
+        {% endif %}
         {% if mod.requires_mod %}
           <button class="btn btn-sm btn-requires-mod" disabled>
             {{ mod.requires_mod }}

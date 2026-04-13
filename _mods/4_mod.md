@@ -6,6 +6,7 @@ img: /assets/img/autobuild.png
 importance: 3
 version: 1.0
 last_updated: 2026-04-12
+documentation_url: /auto-build-docs/
 install_url: https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/auto-build.user.js
 download_url: https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/auto-build.user.js
 ---
