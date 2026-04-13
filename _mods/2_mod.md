@@ -4,7 +4,7 @@ title: Automation Panel
 description: Adds a third panel tab called "Automation". Must be loaded first before other automation script mods that depend on it.
 img: assets/img/AutomationPanel.png
 importance: 1
-version: 1.1
+version: 1.0
 last_updated: 2026-04-10
 install_url: https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/automation-panel.user.js
 download_url: https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/automation-panel.user.js

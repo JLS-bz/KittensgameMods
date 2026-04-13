@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kitten Turbo
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.0
 // @description  Speed multiplier for Kittens Game (1x, 25x, 50x, 75x, 100x)
 // @author       JLS-bz
 // @match        https://kittensgame.com/*
