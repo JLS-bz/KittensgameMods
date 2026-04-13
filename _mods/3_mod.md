@@ -4,8 +4,8 @@ title: Auto Zebra Trading
 description: Automatically trade gold with zebras based on a customizable gold cap threshold. Toggle auto-trading on/off for specific seasons (Spring, Summer, Autumn, Winter). Trades the maximum amount allowed by both gold and resources. 
 img: assets/img/zebra.png
 importance: 2
-version: 1.1
-last_updated: 2026-04-10
+version: 1.0
+last_updated: 2026-04-12
 requires_mod: "Requires Automation Panel"
 install_url: https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/auto-zebra-trading.user.js
 download_url: https://raw.githubusercontent.com/JLS-bz/KittensgameMods/main/_scripts/auto-zebra-trading.user.js

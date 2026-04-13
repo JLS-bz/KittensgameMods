@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Auto Zebra Trading
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.0
 // @description  Automate gold trading with zebras based on customizable threshold
 // @author       JLS-bz
 // @match        https://kittensgame.com/*
@@ -116,9 +116,9 @@
                 return;
             }
 
-            // Get gold resource
-            const gold = window.gamePage.bld.get('library').meta[3]; // Try to get gold resource
-            if (!gold || !gold.value || gold.maxValue <= 0) {
+            // Get gold resource from the resource pool
+            const gold = gamePage.resPool.get('gold');
+            if (!gold || gold.maxValue <= 0) {
                 window.AutomationPanel.setStatus('tradeStatus', 'No gold storage');
                 return;
             }
@@ -132,24 +132,34 @@
                 return;
             }
 
-            // Calculate spendable gold after reserve
+            // Calculate per-trade costs using the game's own methods
+            const goldCostPerTrade = gamePage.diplomacy.getGoldCost();
+            const manpowerCostPerTrade = gamePage.diplomacy.getManpowerCost();
+            const slabCostPerTrade = zebras.buys[0].val;
+
+            // Calculate max trades affordable from each limiting resource
             const goldSpendable = gold.value - (gold.maxValue * state.goldReservePct);
-            const maxByGold = Math.floor(goldSpendable / state.goldCostPerTrade);
+            const maxByGold = Math.floor(goldSpendable / goldCostPerTrade);
 
-            if (maxByGold < 1) {
-                window.AutomationPanel.setStatus('tradeStatus', 'Gold capped but spendable amount below reserve floor');
-                return;
-            }
+            const manpower = gamePage.resPool.get('manpower');
+            const maxByManpower = manpower ? Math.floor(manpower.value / manpowerCostPerTrade) : 0;
 
-            // Get max trades by catpower/slab availability
-            const maxByCatpower = gamePage.diplomacy.getMaxTradeAmt(zebras);
-            if (maxByCatpower < 1) {
-                window.AutomationPanel.setStatus('tradeStatus', 'Season: ' + seasonName + ' — catpower/slab too low');
+            const slab = gamePage.resPool.get(zebras.buys[0].name);
+            const maxBySlab = slab ? Math.floor(slab.value / slabCostPerTrade) : 0;
+
+            const tradesToDo = Math.min(maxByGold, maxByManpower, maxBySlab);
+
+            if (tradesToDo < 1) {
+                window.AutomationPanel.setStatus('tradeStatus',
+                    'Season: ' + seasonName +
+                    ' — waiting (gold: ' + Math.floor(goldSpendable) +
+                    ', manpower: ' + Math.floor(manpower ? manpower.value : 0) +
+                    ', slab: ' + Math.floor(slab ? slab.value : 0) + ')'
+                );
                 return;
             }
 
             // Execute trades
-            const tradesToDo = Math.min(maxByGold, maxByCatpower);
             const goldBefore = gold.value;
             gamePage.diplomacy.tradeMultiple(zebras, tradesToDo);
 
