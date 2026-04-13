@@ -127,18 +127,33 @@
             if (stored) {
                 try {
                     state.config = JSON.parse(stored);
-                    // Verify structure is correct
+                    
+                    // Validate that stored config has all current categories
+                    let isValid = true;
                     for (const category in BUILDING_CATEGORIES) {
                         if (!state.config[category]) {
-                            state.config[category] = {};
+                            isValid = false;
+                            break;
                         }
-                        BUILDING_CATEGORIES[category].forEach(building => {
-                            if (state.config[category][building] === undefined) {
-                                state.config[category][building] = true;
-                            }
-                        });
                     }
-                    loaded = true;
+                    
+                    if (isValid) {
+                        // Verify structure is correct and fill in missing entries
+                        for (const category in BUILDING_CATEGORIES) {
+                            if (!state.config[category]) {
+                                state.config[category] = {};
+                            }
+                            BUILDING_CATEGORIES[category].forEach(building => {
+                                if (state.config[category][building] === undefined) {
+                                    state.config[category][building] = true;
+                                }
+                            });
+                        }
+                        loaded = true;
+                    } else {
+                        console.warn('[AutoBuild] Stored config has outdated categories, resetting...');
+                        loaded = false;
+                    }
                 } catch (e) {
                     console.warn('[AutoBuild] Failed to parse stored config:', e);
                     loaded = false;
@@ -192,12 +207,12 @@
                 sectionHTML.id = 'autobuild-section';
                 sectionHTML.style.cssText = 'padding:8px; margin-bottom:8px; border-bottom:1px solid #666;';
                 sectionHTML.innerHTML = `
-  <b style="font-size:12px; display:block; margin-bottom:6px;">⚙ Auto Build</b>
+  <b style="font-size:16px; display:block; margin-bottom:6px; font-weight:normal;">⚙ Auto Build</b>
   <div style="display:flex; gap:5px; flex-wrap:wrap;">
-    <button id="autobuild-toggle" style="padding:5px 12px; font-size:11px; cursor:pointer; background-color:#006400; color:white; border:none; border-radius:2px; flex:1; min-width:60px;">Start</button>
-    <button id="autobuild-customize" style="padding:5px 12px; font-size:11px; cursor:pointer; background:#444; color:#fff; border:1px solid #666; border-radius:2px; flex:1; min-width:70px;">Customize</button>
+    <button id="autobuild-toggle" style="padding:5px 12px; font-size:13px; cursor:pointer; background-color:#ECECEC; color:#000; border:1px solid #999; border-radius:2px; flex:1; min-width:60px; font-weight:normal;">Start</button>
+    <button id="autobuild-customize" style="padding:5px 12px; font-size:13px; cursor:pointer; background:#ECECEC; color:#000; border:1px solid #999; border-radius:2px; flex:1; min-width:70px; font-weight:normal;">Customize</button>
   </div>
-  <span id="autobuild-status" style="font-size:10px; color:#aaa; display:block; margin-top:5px;">● Status: Idle</span>
+  <span id="autobuild-status" style="font-size:12px; color:#aaa; display:block; margin-top:5px;">● Status: Idle</span>
                 `;
                 queueContainer.insertBefore(sectionHTML, queueContainer.firstChild);
                 attachButtonListeners();
@@ -247,7 +262,7 @@
 
         function updateToggleButton(btn) {
             btn.innerText = state.running ? 'Stop' : 'Start';
-            btn.style.backgroundColor = state.running ? '#8b0000' : '#006400';
+            btn.style.backgroundColor = '#ECECEC';  // Keep consistent gray for both states
             const status = document.getElementById('autobuild-status');
             if (status) {
                 status.innerText = state.running ? '● Building' : '● Idle';
@@ -481,7 +496,13 @@
             // Check if we have enough resources
             for (const resource of building.prices) {
                 const resName = resource.name;
-                const resAmount = resource.val;
+                const basePrice = resource.val;
+
+                // Calculate actual cost with scaling: base_price * (priceRatio ^ buildings_built)
+                let actualCost = basePrice;
+                if (building.on && building.priceRatio && building.priceRatio > 1) {
+                    actualCost = basePrice * Math.pow(building.priceRatio, building.on);
+                }
 
                 let available = 0;
                 
@@ -493,8 +514,8 @@
                     }
                 }
 
-                if (available < resAmount) {
-                    console.debug(`[AutoBuild] Not enough ${resName}: have ${available.toFixed(2)}/${resAmount.toFixed(2)}`);
+                if (available < actualCost) {
+                    console.debug(`[AutoBuild] Not enough ${resName}: have ${available.toFixed(2)}, need ${actualCost.toFixed(2)}`);
                     return false;
                 }
             }
